@@ -1,0 +1,15 @@
+import "Element.relang";
+
+class Vehicle
+{
+    void Fix() @ 0xBEAF;
+    bool Attach(Element* element) @ 0x123456;
+
+    float32 health @ 0x4;
+    ModelInfo* model;
+
+    // Test
+    /* Hello World */
+    /* Hello
+        World */
+};
