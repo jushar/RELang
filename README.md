@@ -14,10 +14,9 @@ class Vehicle : Element // Inherits from class 'Element'
 {
     // Defines a function at the absolute address 0xBEAF
     void Fix() @ 0xBEAF;
-    bool Attach(Element* element) @ 0x123456;
 
     // Defines an attribute at offset 4
-    float32 health @ 0x4;
+    float32 health @ 0x8;
 
     // Based on the size and alignment of the previous attribute
     // this attribute is automatically defined to be at offset 8
@@ -25,5 +24,26 @@ class Vehicle : Element // Inherits from class 'Element'
 
     // Line comment
     /* Block comment */
+};
+```
+transpiles to something like:
+```cpp
+#include "Element.h"
+
+class Vehicle : public Element
+{
+public:
+    inline unsigned long Fix()
+    {
+        using Fix_t = unsigned long(__thiscall *)(Vehicle*);
+        auto f = reinterpret_cast<Fix_t>(0xBEAF);
+        return f(this);
+    }
+
+private:
+    char pad1[4]; // offset 0
+public:
+    float health; // offset 4
+    class ModelInfo* model; // offset 8
 };
 ```
