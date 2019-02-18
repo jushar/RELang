@@ -10,7 +10,8 @@ import (
 )
 
 type CliOptions struct {
-	Path string `short:"p" long:"path" description:"Path to source file" required:"true"`
+	InputPath  string `short:"p" long:"path" description:"Path to source file" required:"true"`
+	OutputPath string `short:"o" long:"out" description:"Path to output file" required:"true"`
 }
 
 func main() {
@@ -22,7 +23,7 @@ func main() {
 	}
 
 	// Open file as stream
-	input, err := antlr.NewFileStream(options.Path)
+	input, err := antlr.NewFileStream(options.InputPath)
 	if err != nil {
 		panic(err)
 	}
@@ -37,5 +38,7 @@ func main() {
 	p.BuildParseTrees = true
 
 	// Walk AST
-	antlr.ParseTreeWalkerDefault.Walk(generator.NewRELangGenerator(), p.Init())
+	gen := generator.NewRELangGenerator(options.OutputPath)
+	defer gen.Close()
+	antlr.ParseTreeWalkerDefault.Walk(gen, p.Init())
 }
