@@ -10,3 +10,7 @@ gulp.task('generate-parser', async () => {
     execFileSync('cmd.exe', ['/c', 'tools\\antlr.bat', ...args]);
   }
 });
+
+gulp.task('build', async () => {
+  execFileSync('go', ['build', 'cmd/relang.go']);
+});
