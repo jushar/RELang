@@ -7,6 +7,7 @@ class Vehicle
 
     float32 health @ 0x4;
     ModelInfo* model;
+    bool engineOn;
 
     // Test
     /* Hello World */

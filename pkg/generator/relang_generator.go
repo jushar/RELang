@@ -32,7 +32,7 @@ func (s *RELangGenerator) Close() {
 }
 
 func (s *RELangGenerator) EnterClassDeclaration(ctx *parser.ClassDeclarationContext) {
-	s.Emitter.EmitClassDeclarationStart(ctx.Name().GetSymbol().GetText())
+	s.Emitter.EmitClassDeclarationStart(ctx.Name().GetText())
 	s.ContextStack.Push(CONTEXT_CLASS_DECL)
 }
 
@@ -63,20 +63,20 @@ func (s *RELangGenerator) EnterVariableDeclaration(ctx *parser.VariableDeclarati
 
 func (s *RELangGenerator) ExitVariableDeclaration(ctx *parser.VariableDeclarationContext) {
 	if s.ContextStack.Contains(CONTEXT_CLASS_DECL) {
-		s.Emitter.EmitClassVariableDeclaration(CppVariable{Name: ctx.Name().GetSymbol().GetText(), Type: s.State.VariableName}, s.State.MemoryAddress)
+		s.Emitter.EmitClassVariableDeclaration(CppVariable{Name: ctx.Name().GetText(), Type: s.State.VariableName}, s.State.MemoryAddress)
 	} else {
-		s.Emitter.EmitVariableDeclaration(CppVariable{Name: ctx.Name().GetSymbol().GetText(), Type: s.State.VariableName}, s.State.MemoryAddress)
+		s.Emitter.EmitVariableDeclaration(CppVariable{Name: ctx.Name().GetText(), Type: s.State.VariableName}, s.State.MemoryAddress)
 	}
 }
 
 func (s *RELangGenerator) EnterMemoryAddress(ctx *parser.MemoryAddressContext) {
-	s.State.MemoryAddress = ctx.HexInteger().GetSymbol().GetText()
+	s.State.MemoryAddress = ctx.HexInteger().GetText()
 }
 
 func (s *RELangGenerator) EnterPointer(ctx *parser.PointerContext) {
-	s.State.VariableName = ctx.Name().GetSymbol().GetText() + "*"
+	s.State.VariableName = ctx.Name().GetText() + "*"
 }
 
 func (s *RELangGenerator) EnterPrimitiveType(ctx *parser.PrimitiveTypeContext) {
-	s.State.VariableName = "int" // TODO: Insert correct type here
+	s.State.VariableName = ctx.GetText()
 }
