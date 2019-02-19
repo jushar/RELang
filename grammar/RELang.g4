@@ -17,7 +17,7 @@ functionParamList : | functionParameter (',' functionParameter)*;
 
 variableDeclaration : variableType Name memoryAddress?;
 
-classDeclaration : 'class' Name '{' classExpression* '}';
+classDeclaration : 'class' Name (':' Name  (',' Name)*)? '{' classExpression* '}';
 classExpression : (functionDeclaration | variableDeclaration) Separator;
 
 importExpression : 'import' NormalString;

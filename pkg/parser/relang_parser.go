@@ -16,7 +16,7 @@ var _ = reflect.Copy
 var _ = strconv.Itoa
 
 var parserATN = []uint16{
-	3, 24715, 42794, 33075, 47597, 16764, 15335, 30598, 22884, 3, 30, 110,
+	3, 24715, 42794, 33075, 47597, 16764, 15335, 30598, 22884, 3, 31, 121,
 	4, 2, 9, 2, 4, 3, 9, 3, 4, 4, 9, 4, 4, 5, 9, 5, 4, 6, 9, 6, 4, 7, 9, 7,
 	4, 8, 9, 8, 4, 9, 9, 9, 4, 10, 9, 10, 4, 11, 9, 11, 4, 12, 9, 12, 4, 13,
 	9, 13, 4, 14, 9, 14, 4, 15, 9, 15, 3, 2, 7, 2, 32, 10, 2, 12, 2, 14, 2,
@@ -25,41 +25,46 @@ var parserATN = []uint16{
 	3, 6, 3, 7, 3, 7, 3, 7, 3, 8, 3, 8, 3, 8, 3, 8, 3, 8, 3, 8, 3, 8, 3, 9,
 	3, 9, 5, 9, 69, 10, 9, 3, 10, 3, 10, 3, 10, 3, 11, 3, 11, 3, 11, 3, 11,
 	7, 11, 78, 10, 11, 12, 11, 14, 11, 81, 11, 11, 5, 11, 83, 10, 11, 3, 12,
-	3, 12, 3, 12, 5, 12, 88, 10, 12, 3, 13, 3, 13, 3, 13, 3, 13, 7, 13, 94,
-	10, 13, 12, 13, 14, 13, 97, 11, 13, 3, 13, 3, 13, 3, 14, 3, 14, 5, 14,
-	103, 10, 14, 3, 14, 3, 14, 3, 15, 3, 15, 3, 15, 3, 15, 2, 2, 16, 2, 4,
-	6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 2, 3, 3, 2, 4, 14, 2, 107,
-	2, 33, 3, 2, 2, 2, 4, 40, 3, 2, 2, 2, 6, 46, 3, 2, 2, 2, 8, 48, 3, 2, 2,
-	2, 10, 54, 3, 2, 2, 2, 12, 56, 3, 2, 2, 2, 14, 59, 3, 2, 2, 2, 16, 68,
-	3, 2, 2, 2, 18, 70, 3, 2, 2, 2, 20, 82, 3, 2, 2, 2, 22, 84, 3, 2, 2, 2,
-	24, 89, 3, 2, 2, 2, 26, 102, 3, 2, 2, 2, 28, 106, 3, 2, 2, 2, 30, 32, 5,
-	4, 3, 2, 31, 30, 3, 2, 2, 2, 32, 35, 3, 2, 2, 2, 33, 31, 3, 2, 2, 2, 33,
-	34, 3, 2, 2, 2, 34, 3, 3, 2, 2, 2, 35, 33, 3, 2, 2, 2, 36, 41, 5, 24, 13,
-	2, 37, 41, 5, 14, 8, 2, 38, 41, 5, 22, 12, 2, 39, 41, 5, 28, 15, 2, 40,
-	36, 3, 2, 2, 2, 40, 37, 3, 2, 2, 2, 40, 38, 3, 2, 2, 2, 40, 39, 3, 2, 2,
-	2, 41, 42, 3, 2, 2, 2, 42, 43, 7, 27, 2, 2, 43, 5, 3, 2, 2, 2, 44, 47,
-	5, 10, 6, 2, 45, 47, 5, 8, 5, 2, 46, 44, 3, 2, 2, 2, 46, 45, 3, 2, 2, 2,
-	47, 7, 3, 2, 2, 2, 48, 50, 7, 24, 2, 2, 49, 51, 7, 3, 2, 2, 50, 49, 3,
-	2, 2, 2, 51, 52, 3, 2, 2, 2, 52, 50, 3, 2, 2, 2, 52, 53, 3, 2, 2, 2, 53,
-	9, 3, 2, 2, 2, 54, 55, 9, 2, 2, 2, 55, 11, 3, 2, 2, 2, 56, 57, 7, 15, 2,
-	2, 57, 58, 7, 25, 2, 2, 58, 13, 3, 2, 2, 2, 59, 60, 5, 16, 9, 2, 60, 61,
-	7, 24, 2, 2, 61, 62, 7, 16, 2, 2, 62, 63, 5, 20, 11, 2, 63, 64, 7, 17,
-	2, 2, 64, 65, 5, 12, 7, 2, 65, 15, 3, 2, 2, 2, 66, 69, 5, 6, 4, 2, 67,
-	69, 7, 18, 2, 2, 68, 66, 3, 2, 2, 2, 68, 67, 3, 2, 2, 2, 69, 17, 3, 2,
-	2, 2, 70, 71, 5, 6, 4, 2, 71, 72, 7, 24, 2, 2, 72, 19, 3, 2, 2, 2, 73,
-	83, 3, 2, 2, 2, 74, 79, 5, 18, 10, 2, 75, 76, 7, 19, 2, 2, 76, 78, 5, 18,
-	10, 2, 77, 75, 3, 2, 2, 2, 78, 81, 3, 2, 2, 2, 79, 77, 3, 2, 2, 2, 79,
-	80, 3, 2, 2, 2, 80, 83, 3, 2, 2, 2, 81, 79, 3, 2, 2, 2, 82, 73, 3, 2, 2,
-	2, 82, 74, 3, 2, 2, 2, 83, 21, 3, 2, 2, 2, 84, 85, 5, 6, 4, 2, 85, 87,
-	7, 24, 2, 2, 86, 88, 5, 12, 7, 2, 87, 86, 3, 2, 2, 2, 87, 88, 3, 2, 2,
-	2, 88, 23, 3, 2, 2, 2, 89, 90, 7, 20, 2, 2, 90, 91, 7, 24, 2, 2, 91, 95,
-	7, 21, 2, 2, 92, 94, 5, 26, 14, 2, 93, 92, 3, 2, 2, 2, 94, 97, 3, 2, 2,
-	2, 95, 93, 3, 2, 2, 2, 95, 96, 3, 2, 2, 2, 96, 98, 3, 2, 2, 2, 97, 95,
-	3, 2, 2, 2, 98, 99, 7, 22, 2, 2, 99, 25, 3, 2, 2, 2, 100, 103, 5, 14, 8,
-	2, 101, 103, 5, 22, 12, 2, 102, 100, 3, 2, 2, 2, 102, 101, 3, 2, 2, 2,
-	103, 104, 3, 2, 2, 2, 104, 105, 7, 27, 2, 2, 105, 27, 3, 2, 2, 2, 106,
-	107, 7, 23, 2, 2, 107, 108, 7, 26, 2, 2, 108, 29, 3, 2, 2, 2, 12, 33, 40,
-	46, 52, 68, 79, 82, 87, 95, 102,
+	3, 12, 3, 12, 5, 12, 88, 10, 12, 3, 13, 3, 13, 3, 13, 3, 13, 3, 13, 3,
+	13, 7, 13, 96, 10, 13, 12, 13, 14, 13, 99, 11, 13, 5, 13, 101, 10, 13,
+	3, 13, 3, 13, 7, 13, 105, 10, 13, 12, 13, 14, 13, 108, 11, 13, 3, 13, 3,
+	13, 3, 14, 3, 14, 5, 14, 114, 10, 14, 3, 14, 3, 14, 3, 15, 3, 15, 3, 15,
+	3, 15, 2, 2, 16, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 2,
+	3, 3, 2, 4, 14, 2, 120, 2, 33, 3, 2, 2, 2, 4, 40, 3, 2, 2, 2, 6, 46, 3,
+	2, 2, 2, 8, 48, 3, 2, 2, 2, 10, 54, 3, 2, 2, 2, 12, 56, 3, 2, 2, 2, 14,
+	59, 3, 2, 2, 2, 16, 68, 3, 2, 2, 2, 18, 70, 3, 2, 2, 2, 20, 82, 3, 2, 2,
+	2, 22, 84, 3, 2, 2, 2, 24, 89, 3, 2, 2, 2, 26, 113, 3, 2, 2, 2, 28, 117,
+	3, 2, 2, 2, 30, 32, 5, 4, 3, 2, 31, 30, 3, 2, 2, 2, 32, 35, 3, 2, 2, 2,
+	33, 31, 3, 2, 2, 2, 33, 34, 3, 2, 2, 2, 34, 3, 3, 2, 2, 2, 35, 33, 3, 2,
+	2, 2, 36, 41, 5, 24, 13, 2, 37, 41, 5, 14, 8, 2, 38, 41, 5, 22, 12, 2,
+	39, 41, 5, 28, 15, 2, 40, 36, 3, 2, 2, 2, 40, 37, 3, 2, 2, 2, 40, 38, 3,
+	2, 2, 2, 40, 39, 3, 2, 2, 2, 41, 42, 3, 2, 2, 2, 42, 43, 7, 28, 2, 2, 43,
+	5, 3, 2, 2, 2, 44, 47, 5, 10, 6, 2, 45, 47, 5, 8, 5, 2, 46, 44, 3, 2, 2,
+	2, 46, 45, 3, 2, 2, 2, 47, 7, 3, 2, 2, 2, 48, 50, 7, 25, 2, 2, 49, 51,
+	7, 3, 2, 2, 50, 49, 3, 2, 2, 2, 51, 52, 3, 2, 2, 2, 52, 50, 3, 2, 2, 2,
+	52, 53, 3, 2, 2, 2, 53, 9, 3, 2, 2, 2, 54, 55, 9, 2, 2, 2, 55, 11, 3, 2,
+	2, 2, 56, 57, 7, 15, 2, 2, 57, 58, 7, 26, 2, 2, 58, 13, 3, 2, 2, 2, 59,
+	60, 5, 16, 9, 2, 60, 61, 7, 25, 2, 2, 61, 62, 7, 16, 2, 2, 62, 63, 5, 20,
+	11, 2, 63, 64, 7, 17, 2, 2, 64, 65, 5, 12, 7, 2, 65, 15, 3, 2, 2, 2, 66,
+	69, 5, 6, 4, 2, 67, 69, 7, 18, 2, 2, 68, 66, 3, 2, 2, 2, 68, 67, 3, 2,
+	2, 2, 69, 17, 3, 2, 2, 2, 70, 71, 5, 6, 4, 2, 71, 72, 7, 25, 2, 2, 72,
+	19, 3, 2, 2, 2, 73, 83, 3, 2, 2, 2, 74, 79, 5, 18, 10, 2, 75, 76, 7, 19,
+	2, 2, 76, 78, 5, 18, 10, 2, 77, 75, 3, 2, 2, 2, 78, 81, 3, 2, 2, 2, 79,
+	77, 3, 2, 2, 2, 79, 80, 3, 2, 2, 2, 80, 83, 3, 2, 2, 2, 81, 79, 3, 2, 2,
+	2, 82, 73, 3, 2, 2, 2, 82, 74, 3, 2, 2, 2, 83, 21, 3, 2, 2, 2, 84, 85,
+	5, 6, 4, 2, 85, 87, 7, 25, 2, 2, 86, 88, 5, 12, 7, 2, 87, 86, 3, 2, 2,
+	2, 87, 88, 3, 2, 2, 2, 88, 23, 3, 2, 2, 2, 89, 90, 7, 20, 2, 2, 90, 100,
+	7, 25, 2, 2, 91, 92, 7, 21, 2, 2, 92, 97, 7, 25, 2, 2, 93, 94, 7, 19, 2,
+	2, 94, 96, 7, 25, 2, 2, 95, 93, 3, 2, 2, 2, 96, 99, 3, 2, 2, 2, 97, 95,
+	3, 2, 2, 2, 97, 98, 3, 2, 2, 2, 98, 101, 3, 2, 2, 2, 99, 97, 3, 2, 2, 2,
+	100, 91, 3, 2, 2, 2, 100, 101, 3, 2, 2, 2, 101, 102, 3, 2, 2, 2, 102, 106,
+	7, 22, 2, 2, 103, 105, 5, 26, 14, 2, 104, 103, 3, 2, 2, 2, 105, 108, 3,
+	2, 2, 2, 106, 104, 3, 2, 2, 2, 106, 107, 3, 2, 2, 2, 107, 109, 3, 2, 2,
+	2, 108, 106, 3, 2, 2, 2, 109, 110, 7, 23, 2, 2, 110, 25, 3, 2, 2, 2, 111,
+	114, 5, 14, 8, 2, 112, 114, 5, 22, 12, 2, 113, 111, 3, 2, 2, 2, 113, 112,
+	3, 2, 2, 2, 114, 115, 3, 2, 2, 2, 115, 116, 7, 28, 2, 2, 116, 27, 3, 2,
+	2, 2, 117, 118, 7, 24, 2, 2, 118, 119, 7, 27, 2, 2, 119, 29, 3, 2, 2, 2,
+	14, 33, 40, 46, 52, 68, 79, 82, 87, 97, 100, 106, 113,
 }
 var deserializer = antlr.NewATNDeserializer(nil)
 var deserializedATN = deserializer.DeserializeFromUInt16(parserATN)
@@ -67,13 +72,13 @@ var deserializedATN = deserializer.DeserializeFromUInt16(parserATN)
 var literalNames = []string{
 	"", "'*'", "'bool'", "'int8'", "'int16'", "'int32'", "'int64'", "'uint8'",
 	"'uint16'", "'uint32'", "'uint64'", "'float32'", "'float64'", "'@'", "'('",
-	"')'", "'void'", "','", "'class'", "'{'", "'}'", "'import'", "", "", "",
-	"';'",
+	"')'", "'void'", "','", "'class'", "':'", "'{'", "'}'", "'import'", "",
+	"", "", "';'",
 }
 var symbolicNames = []string{
 	"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-	"", "", "", "", "Name", "HexInteger", "NormalString", "Separator", "Whitespace",
-	"LineComment", "BlockComment",
+	"", "", "", "", "", "Name", "HexInteger", "NormalString", "Separator",
+	"Whitespace", "LineComment", "BlockComment",
 }
 
 var ruleNames = []string{
@@ -131,13 +136,14 @@ const (
 	RELangParserT__18        = 19
 	RELangParserT__19        = 20
 	RELangParserT__20        = 21
-	RELangParserName         = 22
-	RELangParserHexInteger   = 23
-	RELangParserNormalString = 24
-	RELangParserSeparator    = 25
-	RELangParserWhitespace   = 26
-	RELangParserLineComment  = 27
-	RELangParserBlockComment = 28
+	RELangParserT__21        = 22
+	RELangParserName         = 23
+	RELangParserHexInteger   = 24
+	RELangParserNormalString = 25
+	RELangParserSeparator    = 26
+	RELangParserWhitespace   = 27
+	RELangParserLineComment  = 28
+	RELangParserBlockComment = 29
 )
 
 // RELangParser rules.
@@ -265,7 +271,7 @@ func (p *RELangParser) Init() (localctx IInitContext) {
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
-	for ((_la)&-(0x1f+1)) == 0 && ((1<<uint(_la))&((1<<RELangParserT__1)|(1<<RELangParserT__2)|(1<<RELangParserT__3)|(1<<RELangParserT__4)|(1<<RELangParserT__5)|(1<<RELangParserT__6)|(1<<RELangParserT__7)|(1<<RELangParserT__8)|(1<<RELangParserT__9)|(1<<RELangParserT__10)|(1<<RELangParserT__11)|(1<<RELangParserT__15)|(1<<RELangParserT__17)|(1<<RELangParserT__20)|(1<<RELangParserName))) != 0 {
+	for ((_la)&-(0x1f+1)) == 0 && ((1<<uint(_la))&((1<<RELangParserT__1)|(1<<RELangParserT__2)|(1<<RELangParserT__3)|(1<<RELangParserT__4)|(1<<RELangParserT__5)|(1<<RELangParserT__6)|(1<<RELangParserT__7)|(1<<RELangParserT__8)|(1<<RELangParserT__9)|(1<<RELangParserT__10)|(1<<RELangParserT__11)|(1<<RELangParserT__15)|(1<<RELangParserT__17)|(1<<RELangParserT__21)|(1<<RELangParserName))) != 0 {
 		{
 			p.SetState(28)
 			p.Expression()
@@ -1521,8 +1527,12 @@ func NewClassDeclarationContext(parser antlr.Parser, parent antlr.ParserRuleCont
 
 func (s *ClassDeclarationContext) GetParser() antlr.Parser { return s.parser }
 
-func (s *ClassDeclarationContext) Name() antlr.TerminalNode {
-	return s.GetToken(RELangParserName, 0)
+func (s *ClassDeclarationContext) AllName() []antlr.TerminalNode {
+	return s.GetTokens(RELangParserName)
+}
+
+func (s *ClassDeclarationContext) Name(i int) antlr.TerminalNode {
+	return s.GetToken(RELangParserName, i)
 }
 
 func (s *ClassDeclarationContext) AllClassExpression() []IClassExpressionContext {
@@ -1598,27 +1608,60 @@ func (p *RELangParser) ClassDeclaration() (localctx IClassDeclarationContext) {
 		p.SetState(88)
 		p.Match(RELangParserName)
 	}
-	{
-		p.SetState(89)
-		p.Match(RELangParserT__18)
+	p.SetState(98)
+	p.GetErrorHandler().Sync(p)
+	_la = p.GetTokenStream().LA(1)
+
+	if _la == RELangParserT__18 {
+		{
+			p.SetState(89)
+			p.Match(RELangParserT__18)
+		}
+		{
+			p.SetState(90)
+			p.Match(RELangParserName)
+		}
+		p.SetState(95)
+		p.GetErrorHandler().Sync(p)
+		_la = p.GetTokenStream().LA(1)
+
+		for _la == RELangParserT__16 {
+			{
+				p.SetState(91)
+				p.Match(RELangParserT__16)
+			}
+			{
+				p.SetState(92)
+				p.Match(RELangParserName)
+			}
+
+			p.SetState(97)
+			p.GetErrorHandler().Sync(p)
+			_la = p.GetTokenStream().LA(1)
+		}
+
 	}
-	p.SetState(93)
+	{
+		p.SetState(100)
+		p.Match(RELangParserT__19)
+	}
+	p.SetState(104)
 	p.GetErrorHandler().Sync(p)
 	_la = p.GetTokenStream().LA(1)
 
 	for ((_la)&-(0x1f+1)) == 0 && ((1<<uint(_la))&((1<<RELangParserT__1)|(1<<RELangParserT__2)|(1<<RELangParserT__3)|(1<<RELangParserT__4)|(1<<RELangParserT__5)|(1<<RELangParserT__6)|(1<<RELangParserT__7)|(1<<RELangParserT__8)|(1<<RELangParserT__9)|(1<<RELangParserT__10)|(1<<RELangParserT__11)|(1<<RELangParserT__15)|(1<<RELangParserName))) != 0 {
 		{
-			p.SetState(90)
+			p.SetState(101)
 			p.ClassExpression()
 		}
 
-		p.SetState(95)
+		p.SetState(106)
 		p.GetErrorHandler().Sync(p)
 		_la = p.GetTokenStream().LA(1)
 	}
 	{
-		p.SetState(96)
-		p.Match(RELangParserT__19)
+		p.SetState(107)
+		p.Match(RELangParserT__20)
 	}
 
 	return localctx
@@ -1727,24 +1770,24 @@ func (p *RELangParser) ClassExpression() (localctx IClassExpressionContext) {
 	}()
 
 	p.EnterOuterAlt(localctx, 1)
-	p.SetState(100)
+	p.SetState(111)
 	p.GetErrorHandler().Sync(p)
-	switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 9, p.GetParserRuleContext()) {
+	switch p.GetInterpreter().AdaptivePredict(p.GetTokenStream(), 11, p.GetParserRuleContext()) {
 	case 1:
 		{
-			p.SetState(98)
+			p.SetState(109)
 			p.FunctionDeclaration()
 		}
 
 	case 2:
 		{
-			p.SetState(99)
+			p.SetState(110)
 			p.VariableDeclaration()
 		}
 
 	}
 	{
-		p.SetState(102)
+		p.SetState(113)
 		p.Match(RELangParserSeparator)
 	}
 
@@ -1835,11 +1878,11 @@ func (p *RELangParser) ImportExpression() (localctx IImportExpressionContext) {
 
 	p.EnterOuterAlt(localctx, 1)
 	{
-		p.SetState(104)
-		p.Match(RELangParserT__20)
+		p.SetState(115)
+		p.Match(RELangParserT__21)
 	}
 	{
-		p.SetState(105)
+		p.SetState(116)
 		p.Match(RELangParserNormalString)
 	}
 

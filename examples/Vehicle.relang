@@ -1,6 +1,6 @@
 import "Element.relang";
 
-class Vehicle
+class Vehicle : Element
 {
     void Fix() @ 0xBEAF;
     bool Attach(Element* element) @ 0x123456;

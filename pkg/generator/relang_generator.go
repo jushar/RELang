@@ -32,7 +32,14 @@ func (s *RELangGenerator) Close() {
 }
 
 func (s *RELangGenerator) EnterClassDeclaration(ctx *parser.ClassDeclarationContext) {
-	s.Emitter.EmitClassDeclarationStart(ctx.Name().GetText())
+	baseClasses := []string{}
+	for i, baseClass := range ctx.AllName() {
+		if i > 0 {
+			baseClasses = append(baseClasses, baseClass.GetText())
+		}
+	}
+
+	s.Emitter.EmitClassDeclarationStart(ctx.Name(0).GetText(), baseClasses)
 	s.ContextStack.Push(CONTEXT_CLASS_DECL)
 }
 

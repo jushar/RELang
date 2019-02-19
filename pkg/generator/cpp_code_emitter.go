@@ -89,8 +89,13 @@ func (s *CppCodeEmitter) EmitIncludeStatement(includePath string) {
 	s.EmitLine("#include \""+includePath+"\"", false)
 }
 
-func (s *CppCodeEmitter) EmitClassDeclarationStart(className string) {
-	s.EmitLine("class "+className+"\n{", false)
+func (s *CppCodeEmitter) EmitClassDeclarationStart(className string, baseClasses []string) {
+	if len(baseClasses) > 0 {
+		baseClassEnumeration := strings.Join(baseClasses, ", public ")
+		s.EmitLine(fmt.Sprintf("class %s : public %s\n{", className, baseClassEnumeration), false)
+	} else {
+		s.EmitLine(fmt.Sprintf("class %s\n{", className), false)
+	}
 	s.TabIndex = s.TabIndex + 1
 }
 
