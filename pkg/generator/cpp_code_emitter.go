@@ -20,6 +20,12 @@ type CppVariable struct {
 	Type string
 }
 
+const (
+	// TODO: Make configurable for x64 calling convention
+	DEFAULT_FUNCTION_CALLING_CONVENTION = "__stdcall"
+	DEFAULT_METHOD_CALLING_CONVENTION   = "__thiscall"
+)
+
 func NewCppCodeEmitter(path string) *CppCodeEmitter {
 	e := new(CppCodeEmitter)
 	file, err := os.Create(path)
@@ -104,9 +110,15 @@ func (s *CppCodeEmitter) EmitClassDeclarationEnd() {
 	s.EmitLine("}", true)
 }
 
-func (s *CppCodeEmitter) EmitFunctionDeclaration(functionName string, returnType string, params []CppVariable, memoryAddress string, inClass bool) {
+func (s *CppCodeEmitter) EmitFunctionDeclaration(functionName string, returnType string, params []CppVariable, memoryAddress string, callingConv string, inClass bool) {
 	if inClass {
 		s.EmitPublicBlock()
+
+		if len(callingConv) == 0 {
+			callingConv = DEFAULT_METHOD_CALLING_CONVENTION
+		}
+	} else if len(callingConv) == 0 {
+		callingConv = DEFAULT_FUNCTION_CALLING_CONVENTION
 	}
 
 	s.EmitLine(fmt.Sprintf("inline %s %s(%s)", returnType, functionName, CppFunctionParametersToString(params)), false)
@@ -117,7 +129,7 @@ func (s *CppCodeEmitter) EmitFunctionDeclaration(functionName string, returnType
 		params = append([]CppVariable{CppVariable{Name: "this", Type: "decltype(this)"}}, params...)
 	}
 
-	s.EmitLine(fmt.Sprintf("using Func_t = %s(*)(%s)", returnType, CppFunctionParameterTypesToString(params)), true)
+	s.EmitLine(fmt.Sprintf("using Func_t = %s(%s *)(%s)", returnType, callingConv, CppFunctionParameterTypesToString(params)), true)
 	s.EmitLine(fmt.Sprintf("auto f = reinterpret_cast<Func_t>(%s)", memoryAddress), true)
 	s.EmitLine(fmt.Sprintf("return f(%s)", CppFunctionParameterNamesToString(params)), true)
 

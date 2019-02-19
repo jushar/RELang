@@ -1,0 +1,6 @@
+int32 __cdecl Sum(int16 a, int16 b) @ 0x123;
+
+class Calculator
+{
+    int32 __stdcall Sum(int16 a, int16 b) @ 0xBEAF;
+};

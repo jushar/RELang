@@ -10,11 +10,12 @@ type RELangGenerator struct {
 	Emitter      *CppCodeEmitter
 	ContextStack *GeneratorContextStack
 	State        struct {
-		FunctionName       string
-		FunctionParams     []CppVariable
-		FunctionReturnType string
-		MemoryAddress      string
-		VariableName       string
+		FunctionName              string
+		FunctionParams            []CppVariable
+		FunctionReturnType        string
+		FunctionCallingConvention string
+		MemoryAddress             string
+		VariableName              string
 	}
 }
 
@@ -56,27 +57,19 @@ func (s *RELangGenerator) ExitFunctionDeclaration(ctx *parser.FunctionDeclaratio
 	s.ContextStack.Pop(CONTEXT_FUNCTION_DECL)
 
 	s.Emitter.EmitFunctionDeclaration(ctx.Name().GetText(), s.State.FunctionReturnType, s.State.FunctionParams,
-		s.State.MemoryAddress, s.ContextStack.Contains(CONTEXT_CLASS_DECL))
+		s.State.MemoryAddress, s.State.FunctionCallingConvention, s.ContextStack.Contains(CONTEXT_CLASS_DECL))
 }
 
 func (s *RELangGenerator) EnterFunctionReturnType(ctx *parser.FunctionReturnTypeContext) {
 	s.State.FunctionReturnType = ctx.GetText()
 }
 
-func (s *RELangGenerator) EnterFunctionParamList(ctx *parser.FunctionParamListContext) {
-
-}
-
-func (s *RELangGenerator) EnterFunctionParameter(ctx *parser.FunctionParameterContext) {
-
+func (s *RELangGenerator) EnterCallingConvention(ctx *parser.CallingConventionContext) {
+	s.State.FunctionCallingConvention = ctx.GetText()
 }
 
 func (s *RELangGenerator) ExitFunctionParameter(ctx *parser.FunctionParameterContext) {
 	s.State.FunctionParams = append(s.State.FunctionParams, CppVariable{Name: ctx.Name().GetText(), Type: s.State.VariableName})
-}
-
-func (s *RELangGenerator) EnterVariableDeclaration(ctx *parser.VariableDeclarationContext) {
-
 }
 
 func (s *RELangGenerator) ExitVariableDeclaration(ctx *parser.VariableDeclarationContext) {

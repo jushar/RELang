@@ -57,6 +57,12 @@ func (s *BaseRELangListener) EnterMemoryAddress(ctx *MemoryAddressContext) {}
 // ExitMemoryAddress is called when production memoryAddress is exited.
 func (s *BaseRELangListener) ExitMemoryAddress(ctx *MemoryAddressContext) {}
 
+// EnterCallingConvention is called when production callingConvention is entered.
+func (s *BaseRELangListener) EnterCallingConvention(ctx *CallingConventionContext) {}
+
+// ExitCallingConvention is called when production callingConvention is exited.
+func (s *BaseRELangListener) ExitCallingConvention(ctx *CallingConventionContext) {}
+
 // EnterFunctionDeclaration is called when production functionDeclaration is entered.
 func (s *BaseRELangListener) EnterFunctionDeclaration(ctx *FunctionDeclarationContext) {}
 

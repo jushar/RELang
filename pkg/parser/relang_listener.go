@@ -26,6 +26,9 @@ type RELangListener interface {
 	// EnterMemoryAddress is called when entering the memoryAddress production.
 	EnterMemoryAddress(c *MemoryAddressContext)
 
+	// EnterCallingConvention is called when entering the callingConvention production.
+	EnterCallingConvention(c *CallingConventionContext)
+
 	// EnterFunctionDeclaration is called when entering the functionDeclaration production.
 	EnterFunctionDeclaration(c *FunctionDeclarationContext)
 
@@ -67,6 +70,9 @@ type RELangListener interface {
 
 	// ExitMemoryAddress is called when exiting the memoryAddress production.
 	ExitMemoryAddress(c *MemoryAddressContext)
+
+	// ExitCallingConvention is called when exiting the callingConvention production.
+	ExitCallingConvention(c *CallingConventionContext)
 
 	// ExitFunctionDeclaration is called when exiting the functionDeclaration production.
 	ExitFunctionDeclaration(c *FunctionDeclarationContext)
