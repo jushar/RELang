@@ -10,6 +10,7 @@ class Vehicle : Element
     bool engineOn;
     Vehicle* trailer;
     bool locked;
+    int8 color @ 0x50;
 
     // Test
     /* Hello World */

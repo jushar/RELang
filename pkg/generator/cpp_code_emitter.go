@@ -14,6 +14,7 @@ type CppCodeEmitter struct {
 
 	TabIndex      int
 	InPublicBlock bool
+	PadCounter    uint
 }
 
 type CppVariable struct {
@@ -38,6 +39,7 @@ func NewCppCodeEmitter(path string) *CppCodeEmitter {
 	e.Writer = bufio.NewWriter(e.OutputFile)
 	e.TabIndex = 0
 	e.InPublicBlock = false
+	e.PadCounter = 0
 
 	return e
 }
@@ -147,4 +149,13 @@ func (s *CppCodeEmitter) EmitVariableDeclaration(variable CppVariable, memoryOff
 	s.EmitLine(variable.Type+" "+variable.Name, true)
 
 	// TODO: Insert pads for correct offsetting
+}
+
+func (s *CppCodeEmitter) EmitVariablePad(size uint, inClass bool) {
+	if inClass {
+		s.EmitPrivateBlock()
+	}
+
+	s.EmitLine(fmt.Sprintf("char _pad%d[%d]", s.PadCounter, size), true)
+	s.PadCounter = s.PadCounter + 1
 }

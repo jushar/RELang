@@ -20,7 +20,8 @@ type RELangGenerator struct {
 		VariableType              string
 
 		CurrentMemoryAddressOffset uint
-		NextAttributeSize          uint8
+		CurrentAttributeSize       uint8
+		PadSize                    uint
 	}
 }
 
@@ -80,15 +81,22 @@ func (s *RELangGenerator) ExitFunctionParameter(ctx *parser.FunctionParameterCon
 
 func (s *RELangGenerator) EnterVariableDeclaration(ctx *parser.VariableDeclarationContext) {
 	s.ContextStack.Push(CONTEXT_VARIABLE_DECL)
+
+	s.State.PadSize = 0
 }
 
 func (s *RELangGenerator) ExitVariableDeclaration(ctx *parser.VariableDeclarationContext) {
 	s.ContextStack.Pop(CONTEXT_VARIABLE_DECL)
 
+	// Insert pad if necessary
+	if s.ContextStack.Contains(CONTEXT_CLASS_DECL) && s.State.PadSize > 0 {
+		s.Emitter.EmitVariablePad(s.State.PadSize, true)
+	}
+
 	s.Emitter.EmitVariableDeclaration(CppVariable{Name: ctx.Name().GetText(), Type: s.State.VariableType},
 		s.State.CurrentMemoryAddressOffset, s.ContextStack.Contains(CONTEXT_CLASS_DECL))
 
-	s.State.CurrentMemoryAddressOffset = s.State.CurrentMemoryAddressOffset + uint(s.State.NextAttributeSize)
+	s.State.CurrentMemoryAddressOffset = s.State.CurrentMemoryAddressOffset + uint(s.State.CurrentAttributeSize)
 }
 
 func (s *RELangGenerator) EnterMemoryAddress(ctx *parser.MemoryAddressContext) {
@@ -96,12 +104,16 @@ func (s *RELangGenerator) EnterMemoryAddress(ctx *parser.MemoryAddressContext) {
 	// TODO: Validate memory address
 
 	if s.ContextStack.Contains(CONTEXT_CLASS_DECL) && s.ContextStack.Top() == CONTEXT_VARIABLE_DECL {
-		memoryOffset, err := strconv.ParseUint(s.State.MemoryAddress[2:len(s.State.MemoryAddress)], 10, 32)
+		memoryOffset, err := strconv.ParseUint(s.State.MemoryAddress[2:len(s.State.MemoryAddress)], 16, 32)
 		// TODO: Handle error properly
 		if err != nil {
 			panic(err)
 		}
+
+		oldMemoryAddressOffset := s.State.CurrentMemoryAddressOffset
 		s.State.CurrentMemoryAddressOffset = uint(memoryOffset) // TODO: Make sure memoryOffset is not smaller than CurrentMemoryAddressOffset
+
+		s.State.PadSize = s.State.CurrentMemoryAddressOffset - oldMemoryAddressOffset
 	}
 }
 
@@ -109,7 +121,7 @@ func (s *RELangGenerator) EnterPointer(ctx *parser.PointerContext) {
 	s.State.VariableType = ctx.Name().GetText() + "*"
 
 	if s.ContextStack.Contains(CONTEXT_CLASS_DECL) && s.ContextStack.Top() == CONTEXT_VARIABLE_DECL {
-		s.State.NextAttributeSize = POINTER_SIZE
+		s.State.CurrentAttributeSize = POINTER_SIZE
 	}
 }
 
@@ -117,6 +129,6 @@ func (s *RELangGenerator) EnterPrimitiveType(ctx *parser.PrimitiveTypeContext) {
 	s.State.VariableType = ctx.GetText()
 
 	if s.ContextStack.Contains(CONTEXT_CLASS_DECL) && s.ContextStack.Top() == CONTEXT_VARIABLE_DECL {
-		s.State.NextAttributeSize = TYPES_SIZE[s.State.VariableType]
+		s.State.CurrentAttributeSize = TYPES_SIZE[s.State.VariableType]
 	}
 }
