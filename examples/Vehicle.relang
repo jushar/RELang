@@ -8,6 +8,8 @@ class Vehicle : Element
     float32 health @ 0x4;
     ModelInfo* model;
     bool engineOn;
+    Vehicle* trailer;
+    bool locked;
 
     // Test
     /* Hello World */

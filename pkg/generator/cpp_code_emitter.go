@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -137,12 +138,12 @@ func (s *CppCodeEmitter) EmitFunctionDeclaration(functionName string, returnType
 	s.EmitLine("}\n", false)
 }
 
-func (s *CppCodeEmitter) EmitVariableDeclaration(variable CppVariable, memoryOffset string, inClass bool) {
+func (s *CppCodeEmitter) EmitVariableDeclaration(variable CppVariable, memoryOffset uint, inClass bool) {
 	if inClass {
 		s.EmitPublicBlock()
 	}
 
-	s.EmitLineComment("offset " + memoryOffset)
+	s.EmitLineComment("offset " + strconv.FormatUint(uint64(memoryOffset), 10))
 	s.EmitLine(variable.Type+" "+variable.Name, true)
 
 	// TODO: Insert pads for correct offsetting
