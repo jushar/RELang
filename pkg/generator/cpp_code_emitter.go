@@ -2,6 +2,7 @@ package generator
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"strings"
 )
@@ -98,23 +99,34 @@ func (s *CppCodeEmitter) EmitClassDeclarationEnd() {
 	s.EmitLine("}", true)
 }
 
-func (s *CppCodeEmitter) EmitFunctionDeclaration(functionName string, returnType string, params []CppVariable, memoryAddress string) {
-	// TODO
+func (s *CppCodeEmitter) EmitFunctionDeclaration(functionName string, returnType string, params []CppVariable, memoryAddress string, inClass bool) {
+	if inClass {
+		s.EmitPublicBlock()
+	}
+
+	s.EmitLine(fmt.Sprintf("inline %s %s(%s)", returnType, functionName, CppFunctionParametersToString(params)), false)
+	s.EmitLine("{", false)
+	s.TabIndex = s.TabIndex + 1
+
+	if inClass {
+		params = append([]CppVariable{CppVariable{Name: "this", Type: "decltype(this)"}}, params...)
+	}
+
+	s.EmitLine(fmt.Sprintf("using Func_t = %s(*)(%s)", returnType, CppFunctionParameterTypesToString(params)), true)
+	s.EmitLine(fmt.Sprintf("auto f = reinterpret_cast<Func_t>(%s)", memoryAddress), true)
+	s.EmitLine(fmt.Sprintf("return f(%s)", CppFunctionParameterNamesToString(params)), true)
+
+	s.TabIndex = s.TabIndex - 1
+	s.EmitLine("}\n", false)
 }
 
-func (s *CppCodeEmitter) EmitClassFunctionDeclaration(functionName string, returnType string, params []CppVariable, memoryAddress string) {
-	s.EmitPublicBlock()
-	s.EmitFunctionDeclaration(functionName, returnType, params, memoryAddress)
-}
+func (s *CppCodeEmitter) EmitVariableDeclaration(variable CppVariable, memoryOffset string, inClass bool) {
+	if inClass {
+		s.EmitPublicBlock()
+	}
 
-func (s *CppCodeEmitter) EmitVariableDeclaration(variable CppVariable, memoryOffset string) {
 	s.EmitLineComment("offset " + memoryOffset)
 	s.EmitLine(variable.Type+" "+variable.Name, true)
 
 	// TODO: Insert pads for correct offsetting
-}
-
-func (s *CppCodeEmitter) EmitClassVariableDeclaration(variable CppVariable, memoryOffset string) {
-	s.EmitPublicBlock()
-	s.EmitVariableDeclaration(variable, memoryOffset)
 }

@@ -1,8 +1,6 @@
 package generator
 
 import (
-	"fmt"
-
 	"github.com/Jusonex/RELang/pkg/parser"
 )
 
@@ -12,9 +10,11 @@ type RELangGenerator struct {
 	Emitter      *CppCodeEmitter
 	ContextStack *GeneratorContextStack
 	State        struct {
-		FunctionName  string
-		MemoryAddress string
-		VariableName  string
+		FunctionName       string
+		FunctionParams     []CppVariable
+		FunctionReturnType string
+		MemoryAddress      string
+		VariableName       string
 	}
 }
 
@@ -42,11 +42,18 @@ func (s *RELangGenerator) ExitClassDeclaration(ctx *parser.ClassDeclarationConte
 }
 
 func (s *RELangGenerator) EnterFunctionDeclaration(ctx *parser.FunctionDeclarationContext) {
-	fmt.Println("declare function: ", ctx.Name())
+	s.ContextStack.Push(CONTEXT_FUNCTION_DECL)
+}
+
+func (s *RELangGenerator) ExitFunctionDeclaration(ctx *parser.FunctionDeclarationContext) {
+	s.ContextStack.Pop(CONTEXT_FUNCTION_DECL)
+
+	s.Emitter.EmitFunctionDeclaration(ctx.Name().GetText(), s.State.FunctionReturnType, s.State.FunctionParams,
+		s.State.MemoryAddress, s.ContextStack.Contains(CONTEXT_CLASS_DECL))
 }
 
 func (s *RELangGenerator) EnterFunctionReturnType(ctx *parser.FunctionReturnTypeContext) {
-
+	s.State.FunctionReturnType = ctx.GetText()
 }
 
 func (s *RELangGenerator) EnterFunctionParamList(ctx *parser.FunctionParamListContext) {
@@ -57,16 +64,17 @@ func (s *RELangGenerator) EnterFunctionParameter(ctx *parser.FunctionParameterCo
 
 }
 
+func (s *RELangGenerator) ExitFunctionParameter(ctx *parser.FunctionParameterContext) {
+	s.State.FunctionParams = append(s.State.FunctionParams, CppVariable{Name: ctx.Name().GetText(), Type: s.State.VariableName})
+}
+
 func (s *RELangGenerator) EnterVariableDeclaration(ctx *parser.VariableDeclarationContext) {
 
 }
 
 func (s *RELangGenerator) ExitVariableDeclaration(ctx *parser.VariableDeclarationContext) {
-	if s.ContextStack.Contains(CONTEXT_CLASS_DECL) {
-		s.Emitter.EmitClassVariableDeclaration(CppVariable{Name: ctx.Name().GetText(), Type: s.State.VariableName}, s.State.MemoryAddress)
-	} else {
-		s.Emitter.EmitVariableDeclaration(CppVariable{Name: ctx.Name().GetText(), Type: s.State.VariableName}, s.State.MemoryAddress)
-	}
+	s.Emitter.EmitVariableDeclaration(CppVariable{Name: ctx.Name().GetText(), Type: s.State.VariableName},
+		s.State.MemoryAddress, s.ContextStack.Contains(CONTEXT_CLASS_DECL))
 }
 
 func (s *RELangGenerator) EnterMemoryAddress(ctx *parser.MemoryAddressContext) {
