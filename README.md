@@ -90,11 +90,13 @@ On assembly level, we only need to distinguish between primitive types, pointers
 
 #### Primitive Types
 Supported primitive types are:
+
 | signed | unsigned | other   |
-|--------|----------|---------|
+| ------ | -------- | ------- |
 | int8   | uint8    | bool    |
 | int16  | uint16   | float32 |
 | int32  | uint32   | float64 |
+
 Their meaning should be self-explanatory and matches [C++'s fixed width integer types](https://en.cppreference.com/w/cpp/types/integer).
 
 #### Pointers
