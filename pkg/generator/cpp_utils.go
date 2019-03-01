@@ -1,8 +1,12 @@
 package generator
 
-import "strings"
+import (
+	"strings"
 
-func mapCppVariables(vs []CppVariable, f func(CppVariable) string) []string {
+	"github.com/Jusonex/RELang/pkg/model"
+)
+
+func mapCppParameters(vs []model.Parameter, f func(model.Parameter) string) []string {
 	vsm := make([]string, len(vs))
 	for i, v := range vs {
 		vsm[i] = f(v)
@@ -11,22 +15,22 @@ func mapCppVariables(vs []CppVariable, f func(CppVariable) string) []string {
 }
 
 // Converts an array of cpp variables to a fully typed comma-separated function parameter string
-func CppFunctionParametersToString(params []CppVariable) string {
-	return strings.Join(mapCppVariables(params, func(param CppVariable) string {
+func CppFunctionParametersToString(params []model.Parameter) string {
+	return strings.Join(mapCppParameters(params, func(param model.Parameter) string {
 		return param.Type + " " + param.Name
 	}), ", ")
 }
 
 // Converts an array of cpp varaibles to a comma-separated list of parameter names
-func CppFunctionParameterNamesToString(params []CppVariable) string {
-	return strings.Join(mapCppVariables(params, func(param CppVariable) string {
+func CppFunctionParameterNamesToString(params []model.Parameter) string {
+	return strings.Join(mapCppParameters(params, func(param model.Parameter) string {
 		return param.Name
 	}), ", ")
 }
 
 // Converts an array of cpp varaibles to a comma-separated list of parameter types
-func CppFunctionParameterTypesToString(params []CppVariable) string {
-	return strings.Join(mapCppVariables(params, func(param CppVariable) string {
+func CppFunctionParameterTypesToString(params []model.Parameter) string {
+	return strings.Join(mapCppParameters(params, func(param model.Parameter) string {
 		return param.Type
 	}), ", ")
 }

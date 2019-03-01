@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 
+	"github.com/Jusonex/RELang/pkg/generator"
 	"github.com/Jusonex/RELang/pkg/parser"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	flags "github.com/jessevdk/go-flags"
@@ -37,6 +38,11 @@ func main() {
 	p.BuildParseTrees = true
 
 	// Walk AST
-	chunkReader := parser.NewChunkReader(options.OutputPath)
+	chunkReader := parser.NewChunkReader()
 	antlr.ParseTreeWalkerDefault.Walk(chunkReader, p.Init())
+
+	// Generate C++ code
+	generator := generator.NewCppCodeGenerator(options.OutputPath)
+	defer generator.Close()
+	generator.Generate(chunkReader.State.Chunk)
 }

@@ -6,27 +6,16 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/Jusonex/RELang/pkg/model"
 )
 
 type CppCodeEmitter struct {
 	OutputFile *os.File
 	Writer     *bufio.Writer
 
-	TabIndex      int
-	InPublicBlock bool
-	PadCounter    uint
+	TabIndex int
 }
-
-type CppVariable struct {
-	Name string
-	Type string
-}
-
-const (
-	// TODO: Make configurable for x64 calling convention
-	DEFAULT_FUNCTION_CALLING_CONVENTION = "__stdcall"
-	DEFAULT_METHOD_CALLING_CONVENTION   = "__thiscall"
-)
 
 func NewCppCodeEmitter(path string) *CppCodeEmitter {
 	e := new(CppCodeEmitter)
@@ -38,8 +27,6 @@ func NewCppCodeEmitter(path string) *CppCodeEmitter {
 	e.OutputFile = file
 	e.Writer = bufio.NewWriter(e.OutputFile)
 	e.TabIndex = 0
-	e.InPublicBlock = false
-	e.PadCounter = 0
 
 	return e
 }
@@ -77,21 +64,15 @@ func (s *CppCodeEmitter) EmitLine(line string, separator bool) {
 }
 
 func (s *CppCodeEmitter) EmitPublicBlock() {
-	if !s.InPublicBlock {
-		s.TabIndex = s.TabIndex - 1 // temporally step back tab index
-		s.EmitLine("public:", false)
-		s.TabIndex = s.TabIndex + 1
-		s.InPublicBlock = true
-	}
+	s.TabIndex = s.TabIndex - 1 // temporally step back tab index
+	s.EmitLine("public:", false)
+	s.TabIndex = s.TabIndex + 1
 }
 
 func (s *CppCodeEmitter) EmitPrivateBlock() {
-	if s.InPublicBlock {
-		s.TabIndex = s.TabIndex - 1 // temporally step back tab index
-		s.EmitLine("private:", false)
-		s.TabIndex = s.TabIndex + 1 // temporally step back tab index
-		s.InPublicBlock = false
-	}
+	s.TabIndex = s.TabIndex - 1 // temporally step back tab index
+	s.EmitLine("private:", false)
+	s.TabIndex = s.TabIndex + 1
 }
 
 func (s *CppCodeEmitter) EmitIncludeStatement(includePath string) {
@@ -113,55 +94,28 @@ func (s *CppCodeEmitter) EmitClassDeclarationEnd() {
 	s.EmitLine("}", true)
 }
 
-func (s *CppCodeEmitter) EmitFunctionDeclaration(functionName string, returnType string, params []CppVariable, memoryAddress string, callingConv string, inClass bool) {
-	if inClass {
-		s.EmitPublicBlock()
-
-		if len(callingConv) == 0 {
-			callingConv = DEFAULT_METHOD_CALLING_CONVENTION
-		}
-	} else if len(callingConv) == 0 {
-		callingConv = DEFAULT_FUNCTION_CALLING_CONVENTION
-	}
-
+func (s *CppCodeEmitter) EmitFunctionDeclaration(functionName string, returnType string, params []model.Parameter, memoryAddress uint64, callingConv string, inClass bool) {
 	s.EmitLine(fmt.Sprintf("inline %s %s(%s)", returnType, functionName, CppFunctionParametersToString(params)), false)
 	s.EmitLine("{", false)
 	s.TabIndex = s.TabIndex + 1
 
 	if inClass {
-		params = append([]CppVariable{CppVariable{Name: "this", Type: "decltype(this)"}}, params...)
+		params = append([]model.Parameter{model.Parameter{Name: "this", Type: "decltype(this)"}}, params...)
 	}
 
 	s.EmitLine(fmt.Sprintf("using Func_t = %s(%s *)(%s)", returnType, callingConv, CppFunctionParameterTypesToString(params)), true)
-	s.EmitLine(fmt.Sprintf("auto f = reinterpret_cast<Func_t>(%s)", memoryAddress), true)
+	s.EmitLine(fmt.Sprintf("auto f = reinterpret_cast<Func_t>(0x%x)", memoryAddress), true)
 	s.EmitLine(fmt.Sprintf("return f(%s)", CppFunctionParameterNamesToString(params)), true)
 
 	s.TabIndex = s.TabIndex - 1
 	s.EmitLine("}\n", false)
 }
 
-func (s *CppCodeEmitter) EmitVirtualFunctionDeclaration(functionName string, returnType string, params []CppVariable, memoryOffset string, callingConv string) {
-	s.EmitPublicBlock()
-
+func (s *CppCodeEmitter) EmitVirtualFunctionDeclaration(functionName string, returnType string, params []model.Parameter, memoryOffset uint64, callingConv string) {
 	s.EmitLine(fmt.Sprintf("virtual %s %s(%s) = 0", returnType, functionName, CppFunctionParametersToString(params)), true)
 }
 
-func (s *CppCodeEmitter) EmitVariableDeclaration(variable CppVariable, memoryOffset uint, inClass bool) {
-	if inClass {
-		s.EmitPublicBlock()
-	}
-
+func (s *CppCodeEmitter) EmitVariableDeclaration(name string, variableType string, memoryOffset uint64) {
 	s.EmitLineComment("offset " + strconv.FormatUint(uint64(memoryOffset), 10))
-	s.EmitLine(variable.Type+" "+variable.Name, true)
-
-	// TODO: Insert pads for correct offsetting
-}
-
-func (s *CppCodeEmitter) EmitVariablePad(size uint, inClass bool) {
-	if inClass {
-		s.EmitPrivateBlock()
-	}
-
-	s.EmitLine(fmt.Sprintf("char _pad%d[%d]", s.PadCounter, size), true)
-	s.PadCounter = s.PadCounter + 1
+	s.EmitLine(variableType+" "+name, true)
 }

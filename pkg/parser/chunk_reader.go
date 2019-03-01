@@ -21,7 +21,7 @@ type ChunkReader struct {
 	}
 }
 
-func NewChunkReader(outputFilePath string) *ChunkReader {
+func NewChunkReader() *ChunkReader {
 	s := new(ChunkReader)
 
 	s.State.Chunk = model.NewChunk()
