@@ -12,6 +12,8 @@ class Vehicle : Element
     bool locked;
     int8 color @ 0x50;
 
+    virtual uint8 GetType();
+
     // Test
     /* Hello World */
     /* Hello

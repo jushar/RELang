@@ -16,6 +16,7 @@ type RELangGenerator struct {
 		FunctionParams            []CppVariable
 		FunctionReturnType        string
 		FunctionCallingConvention string
+		FunctionModifier          string
 		MemoryAddress             string
 		VariableType              string
 
@@ -63,8 +64,24 @@ func (s *RELangGenerator) EnterFunctionDeclaration(ctx *parser.FunctionDeclarati
 func (s *RELangGenerator) ExitFunctionDeclaration(ctx *parser.FunctionDeclarationContext) {
 	s.ContextStack.Pop(CONTEXT_FUNCTION_DECL)
 
-	s.Emitter.EmitFunctionDeclaration(ctx.Name().GetText(), s.State.FunctionReturnType, s.State.FunctionParams,
-		s.State.MemoryAddress, s.State.FunctionCallingConvention, s.ContextStack.Contains(CONTEXT_CLASS_DECL))
+	inClass := s.ContextStack.Contains(CONTEXT_CLASS_DECL)
+	if s.State.FunctionModifier == "virtual" {
+		if !inClass {
+			panic("Not in class") // TODO: Handle error properly
+		}
+
+		s.Emitter.EmitVirtualFunctionDeclaration(ctx.Name().GetText(), s.State.FunctionReturnType, s.State.FunctionParams,
+			s.State.MemoryAddress, s.State.FunctionCallingConvention)
+	} else if s.State.FunctionModifier == "static" {
+		// TODO
+	} else {
+		s.Emitter.EmitFunctionDeclaration(ctx.Name().GetText(), s.State.FunctionReturnType, s.State.FunctionParams,
+			s.State.MemoryAddress, s.State.FunctionCallingConvention, inClass)
+	}
+}
+
+func (s *RELangGenerator) EnterFunctionModifier(ctx *parser.FunctionModifierContext) {
+	s.State.FunctionModifier = ctx.GetText()
 }
 
 func (s *RELangGenerator) EnterFunctionReturnType(ctx *parser.FunctionReturnTypeContext) {
@@ -100,6 +117,10 @@ func (s *RELangGenerator) ExitVariableDeclaration(ctx *parser.VariableDeclaratio
 }
 
 func (s *RELangGenerator) EnterMemoryAddress(ctx *parser.MemoryAddressContext) {
+	if ctx.HexInteger() == nil {
+		return
+	}
+
 	s.State.MemoryAddress = ctx.HexInteger().GetText()
 	// TODO: Validate memory address
 

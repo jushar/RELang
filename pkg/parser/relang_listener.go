@@ -41,6 +41,9 @@ type RELangListener interface {
 	// EnterFunctionParamList is called when entering the functionParamList production.
 	EnterFunctionParamList(c *FunctionParamListContext)
 
+	// EnterFunctionModifier is called when entering the functionModifier production.
+	EnterFunctionModifier(c *FunctionModifierContext)
+
 	// EnterVariableDeclaration is called when entering the variableDeclaration production.
 	EnterVariableDeclaration(c *VariableDeclarationContext)
 
@@ -85,6 +88,9 @@ type RELangListener interface {
 
 	// ExitFunctionParamList is called when exiting the functionParamList production.
 	ExitFunctionParamList(c *FunctionParamListContext)
+
+	// ExitFunctionModifier is called when exiting the functionModifier production.
+	ExitFunctionModifier(c *FunctionModifierContext)
 
 	// ExitVariableDeclaration is called when exiting the variableDeclaration production.
 	ExitVariableDeclaration(c *VariableDeclarationContext)

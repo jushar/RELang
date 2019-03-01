@@ -140,6 +140,12 @@ func (s *CppCodeEmitter) EmitFunctionDeclaration(functionName string, returnType
 	s.EmitLine("}\n", false)
 }
 
+func (s *CppCodeEmitter) EmitVirtualFunctionDeclaration(functionName string, returnType string, params []CppVariable, memoryOffset string, callingConv string) {
+	s.EmitPublicBlock()
+
+	s.EmitLine(fmt.Sprintf("virtual %s %s(%s) = 0", returnType, functionName, CppFunctionParametersToString(params)), true)
+}
+
 func (s *CppCodeEmitter) EmitVariableDeclaration(variable CppVariable, memoryOffset uint, inClass bool) {
 	if inClass {
 		s.EmitPublicBlock()

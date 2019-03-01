@@ -8,15 +8,16 @@ expression : (classDeclaration | functionDeclaration | variableDeclaration | imp
 variableType : primitiveType | pointer;
 pointer : Name '*'+;
 primitiveType : 'bool'|'int8'|'int16'|'int32'|'int64'|'uint8'|'uint16'|'uint32'|'uint64'|'float32'|'float64';
-memoryAddress : '@' HexInteger;
+memoryAddress : |'@' HexInteger;
 callingConvention : |'__cdecl'|'__stdcall'|'__thiscall'|'__fastcall';
 
-functionDeclaration : functionReturnType callingConvention Name '(' functionParamList ')' memoryAddress;
+functionDeclaration : functionModifier functionReturnType callingConvention Name '(' functionParamList ')' memoryAddress;
 functionReturnType : variableType | 'void';
 functionParameter : variableType Name;
 functionParamList : | functionParameter (',' functionParameter)*;
+functionModifier : |'virtual'|'static';
 
-variableDeclaration : variableType Name memoryAddress?;
+variableDeclaration : variableType Name memoryAddress;
 
 classDeclaration : 'class' Name (':' Name  (',' Name)*)? '{' classExpression* '}';
 classExpression : (functionDeclaration | variableDeclaration) Separator;

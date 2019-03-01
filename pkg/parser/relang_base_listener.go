@@ -87,6 +87,12 @@ func (s *BaseRELangListener) EnterFunctionParamList(ctx *FunctionParamListContex
 // ExitFunctionParamList is called when production functionParamList is exited.
 func (s *BaseRELangListener) ExitFunctionParamList(ctx *FunctionParamListContext) {}
 
+// EnterFunctionModifier is called when production functionModifier is entered.
+func (s *BaseRELangListener) EnterFunctionModifier(ctx *FunctionModifierContext) {}
+
+// ExitFunctionModifier is called when production functionModifier is exited.
+func (s *BaseRELangListener) ExitFunctionModifier(ctx *FunctionModifierContext) {}
+
 // EnterVariableDeclaration is called when production variableDeclaration is entered.
 func (s *BaseRELangListener) EnterVariableDeclaration(ctx *VariableDeclarationContext) {}
 

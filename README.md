@@ -169,7 +169,7 @@ class PlantFactory {
             // Do some stuff
         }
     }
-}
+};
 ```
 
 ### Namespaces
