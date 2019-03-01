@@ -1,4 +1,4 @@
-package generator
+package parser
 
 type GeneratorContext int32
 
