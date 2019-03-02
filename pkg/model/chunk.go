@@ -17,3 +17,7 @@ func (s *Chunk) AddClass(class *Class) {
 func (s *Chunk) AddFunction(function *Function) {
 	s.GlobalFunctions = append(s.GlobalFunctions, function)
 }
+
+func (s *Chunk) AddVariable(variable *Variable) {
+	s.GlobalVariables = append(s.GlobalVariables, variable)
+}

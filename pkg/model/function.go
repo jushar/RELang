@@ -17,8 +17,8 @@ type Function struct {
 	MemoryAddress     *uint64
 }
 
-func NewFunction() *Function {
-	return &Function{}
+func NewFunction(name string) *Function {
+	return &Function{Name: name}
 }
 
 func (s *Function) AddParameter(name string, parameterType string) {

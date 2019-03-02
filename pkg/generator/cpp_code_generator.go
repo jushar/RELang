@@ -1,6 +1,8 @@
 package generator
 
-import "github.com/Jusonex/RELang/pkg/model"
+import (
+	"github.com/Jusonex/RELang/pkg/model"
+)
 
 type CppCodeGenerator struct {
 	Emitter *CppCodeEmitter
@@ -26,11 +28,22 @@ func (s *CppCodeGenerator) Generate(chunk *model.Chunk) {
 	s.CreateMemoryAddresses(chunk)
 	s.CreateVariablePads(chunk)
 	s.CreateVirtualFunctionPads(chunk)
+	s.CreateCallingConventions(chunk)
 	s.EmitCode(chunk)
 }
 
 func (s *CppCodeGenerator) CreateMemoryAddresses(chunk *model.Chunk) {
-	// TODO
+	for _, class := range chunk.Classes {
+		for _, variable := range class.Variables {
+			addr := uint64(0)
+			variable.MemoryOffset = &addr
+		}
+
+		for _, function := range class.VirtualFunctions {
+			addr := uint64(0)
+			function.MemoryAddress = &addr
+		}
+	}
 }
 
 func (s *CppCodeGenerator) CreateVariablePads(chunk *model.Chunk) {
@@ -39,6 +52,28 @@ func (s *CppCodeGenerator) CreateVariablePads(chunk *model.Chunk) {
 
 func (s *CppCodeGenerator) CreateVirtualFunctionPads(chunk *model.Chunk) {
 	// TODO
+}
+
+func (s *CppCodeGenerator) CreateCallingConventions(chunk *model.Chunk) {
+	for _, class := range chunk.Classes {
+		for _, function := range class.Functions {
+			if function.CallingConvention == "" {
+				function.CallingConvention = DEFAULT_METHOD_CALLING_CONVENTION
+			}
+		}
+
+		for _, function := range class.VirtualFunctions {
+			if function.CallingConvention == "" {
+				function.CallingConvention = DEFAULT_METHOD_CALLING_CONVENTION
+			}
+		}
+	}
+
+	for _, function := range chunk.GlobalFunctions {
+		if function.CallingConvention == "" {
+			function.CallingConvention = DEFAULT_FUNCTION_CALLING_CONVENTION
+		}
+	}
 }
 
 func (s *CppCodeGenerator) EmitCode(chunk *model.Chunk) {
@@ -50,16 +85,20 @@ func (s *CppCodeGenerator) EmitCode(chunk *model.Chunk) {
 		s.Emitter.EmitPublicBlock()
 
 		// Emit virtual functions
+		s.Emitter.EmitLineComment("Virtual functions")
 		for _, function := range class.VirtualFunctions {
 			s.Emitter.EmitVirtualFunctionDeclaration(function.Name, function.ReturnType, function.Params, *function.MemoryAddress, function.CallingConvention)
 		}
 
 		// Emit functions
+		s.Emitter.EmitLine("", false)
+		s.Emitter.EmitLineComment("Functions")
 		for _, function := range class.Functions {
 			s.Emitter.EmitFunctionDeclaration(function.Name, function.ReturnType, function.Params, *function.MemoryAddress, function.CallingConvention, true)
 		}
 
 		// Emit variables
+		s.Emitter.EmitLineComment("Variables")
 		for _, variable := range class.Variables {
 			s.Emitter.EmitVariableDeclaration(variable.Name, variable.Type, *variable.MemoryOffset)
 		}

@@ -29,3 +29,7 @@ func (s *Class) AddFunction(function *Function) {
 		s.Functions = append(s.Functions, function)
 	}
 }
+
+func (s *Class) AddVariable(variable *Variable) {
+	s.Variables = append(s.Variables, variable)
+}

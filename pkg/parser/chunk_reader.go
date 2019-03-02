@@ -50,7 +50,7 @@ func (s *ChunkReader) ExitClassDeclaration(ctx *ClassDeclarationContext) {
 }
 
 func (s *ChunkReader) EnterFunctionDeclaration(ctx *FunctionDeclarationContext) {
-	s.State.Function = model.NewFunction()
+	s.State.Function = model.NewFunction(ctx.Name().GetText())
 	s.ContextStack.Push(CONTEXT_FUNCTION_DECL)
 }
 
@@ -97,10 +97,21 @@ func (s *ChunkReader) ExitFunctionParameter(ctx *FunctionParameterContext) {
 
 func (s *ChunkReader) EnterVariableDeclaration(ctx *VariableDeclarationContext) {
 	s.State.Variable = model.NewVariable()
+
 	s.ContextStack.Push(CONTEXT_VARIABLE_DECL)
 }
 
 func (s *ChunkReader) ExitVariableDeclaration(ctx *VariableDeclarationContext) {
+	s.State.Variable.Name = ctx.Name().GetText()
+	s.State.Variable.Type = s.State.VariableType
+
+	inClass := s.ContextStack.Contains(CONTEXT_CLASS_DECL)
+	if inClass {
+		s.State.Class.AddVariable(s.State.Variable)
+	} else {
+		s.State.Chunk.AddVariable(s.State.Variable)
+	}
+
 	s.ContextStack.Pop(CONTEXT_VARIABLE_DECL)
 	s.State.Variable = nil
 }
