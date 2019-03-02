@@ -13,6 +13,7 @@ class Vehicle : Element
     int8 color @ 0x50;
 
     virtual uint8 GetType();
+    virtual uint8 GetType2() @ 0xC;
 
     // Test
     /* Hello World */

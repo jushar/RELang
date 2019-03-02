@@ -1,5 +1,7 @@
 package model
 
+import "fmt"
+
 type Parameter struct {
 	Name string
 	Type string
@@ -19,6 +21,18 @@ type Function struct {
 
 func NewFunction(name string) *Function {
 	return &Function{Name: name}
+}
+
+func NewFunctionPad(memoryOffset uint64) *Function {
+	addr := memoryOffset
+
+	return &Function{
+		Name:              fmt.Sprintf("vpad_%x", memoryOffset),
+		ReturnType:        "void",
+		Modifier:          "virtual",
+		CallingConvention: "",
+		MemoryAddress:     &addr,
+	}
 }
 
 func (s *Function) AddParameter(name string, parameterType string) {
