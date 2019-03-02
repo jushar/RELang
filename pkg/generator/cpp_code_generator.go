@@ -34,14 +34,35 @@ func (s *CppCodeGenerator) Generate(chunk *model.Chunk) {
 
 func (s *CppCodeGenerator) CreateMemoryAddresses(chunk *model.Chunk) {
 	for _, class := range chunk.Classes {
+		currentAddr := uint64(0)
+
+		// Fill memory offsets for class variables
 		for _, variable := range class.Variables {
-			addr := uint64(0)
-			variable.MemoryOffset = &addr
+			if variable.MemoryOffset != nil {
+				currentAddr = *variable.MemoryOffset
+			} else {
+				addr := currentAddr
+				variable.MemoryOffset = &addr
+			}
+
+			size, err := GetInbuiltTypeSize(variable.Type)
+			if err != nil { // TODO: Support custom types
+				panic(err)
+			}
+			currentAddr = currentAddr + uint64(size)
 		}
 
+		// Fill memory offsets for virtual methods
+		currentAddr = uint64(0)
 		for _, function := range class.VirtualFunctions {
-			addr := uint64(0)
-			function.MemoryAddress = &addr
+			if function.MemoryAddress != nil {
+				currentAddr = *function.MemoryAddress
+			} else {
+				addr := currentAddr
+				function.MemoryAddress = &addr
+			}
+
+			currentAddr = currentAddr + uint64(POINTER_SIZE)
 		}
 	}
 }

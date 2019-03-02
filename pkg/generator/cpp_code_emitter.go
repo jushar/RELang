@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strconv"
 	"strings"
 
 	"github.com/Jusonex/RELang/pkg/model"
@@ -116,6 +115,5 @@ func (s *CppCodeEmitter) EmitVirtualFunctionDeclaration(functionName string, ret
 }
 
 func (s *CppCodeEmitter) EmitVariableDeclaration(name string, variableType string, memoryOffset uint64) {
-	s.EmitLineComment("offset " + strconv.FormatUint(uint64(memoryOffset), 10))
-	s.EmitLine(variableType+" "+name, true)
+	s.EmitLine(fmt.Sprintf("%s %s; // offset 0x%X", variableType, name, memoryOffset), false)
 }
