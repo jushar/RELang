@@ -170,4 +170,12 @@ func (s *CppCodeGenerator) EmitCode(chunk *model.Chunk) {
 
 		s.Emitter.EmitClassDeclarationEnd()
 	}
+
+	// Emit global functions
+	s.Emitter.EmitLine("", false)
+	for _, function := range chunk.GlobalFunctions {
+		s.Emitter.EmitLineComment("Global functions")
+
+		s.Emitter.EmitFunctionDeclaration(function.Name, function.ReturnType, function.Params, *function.MemoryAddress, function.CallingConvention, false)
+	}
 }
