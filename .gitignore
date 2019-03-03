@@ -14,3 +14,5 @@
 .antlr
 /node_modules
 /examples/out
+
+/test/testoutput.h

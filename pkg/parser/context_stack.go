@@ -51,3 +51,8 @@ func (s *GeneratorContextStack) Contains(context GeneratorContext) bool {
 
 	return false
 }
+
+// Returns the number of elements on the stack
+func (s *GeneratorContextStack) Size() int {
+	return len(s.stack)
+}

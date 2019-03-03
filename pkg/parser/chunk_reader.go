@@ -6,6 +6,7 @@ import (
 	"github.com/Jusonex/RELang/pkg/model"
 )
 
+// Type for creating a chunk model from the parsed AST
 type ChunkReader struct {
 	*BaseRELangListener
 
@@ -21,6 +22,7 @@ type ChunkReader struct {
 	}
 }
 
+// Constructs a new chunk reader
 func NewChunkReader() *ChunkReader {
 	s := new(ChunkReader)
 

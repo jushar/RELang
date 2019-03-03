@@ -4,7 +4,11 @@ import (
 	"github.com/Jusonex/RELang/pkg/model"
 )
 
+// Holds information about the C++ code generator
+// that accepts the parsed chunk as input and
+// generates a C++ header file for it
 type CppCodeGenerator struct {
+	// Low-level code emitter
 	Emitter *CppCodeEmitter
 }
 
@@ -14,24 +18,32 @@ const (
 	DEFAULT_METHOD_CALLING_CONVENTION   = "__thiscall"
 )
 
+// Constructs a new cpp code generator
 func NewCppCodeGenerator(path string) *CppCodeGenerator {
 	return &CppCodeGenerator{
 		Emitter: NewCppCodeEmitter(path),
 	}
 }
 
+// Disposes associated resources
 func (s *CppCodeGenerator) Close() {
 	s.Emitter.Close()
 }
 
+// Invokes the generator for a specific chunk
 func (s *CppCodeGenerator) Generate(chunk *model.Chunk) {
+	// Prepare chunk for code generation
+	// e.g. add missing fields
 	s.CreateMemoryAddresses(chunk)
 	s.CreateVariablePads(chunk)
 	s.CreateVirtualFunctionPads(chunk)
 	s.CreateCallingConventions(chunk)
+
+	// After preperations are done, emit the code as is
 	s.EmitCode(chunk)
 }
 
+// Fills missing attributes for a chunk in subsequent manner
 func (s *CppCodeGenerator) CreateMemoryAddresses(chunk *model.Chunk) {
 	for _, class := range chunk.Classes {
 		currentAddr := uint64(0)
@@ -67,6 +79,7 @@ func (s *CppCodeGenerator) CreateMemoryAddresses(chunk *model.Chunk) {
 	}
 }
 
+// Creates padding attributes for field gaps for the specified chunk
 func (s *CppCodeGenerator) CreateVariablePads(chunk *model.Chunk) {
 	for _, class := range chunk.Classes {
 		var newVariables []*model.Variable
@@ -94,6 +107,7 @@ func (s *CppCodeGenerator) CreateVariablePads(chunk *model.Chunk) {
 	}
 }
 
+// Creates pads for virtual functions
 func (s *CppCodeGenerator) CreateVirtualFunctionPads(chunk *model.Chunk) {
 	for _, class := range chunk.Classes {
 		var newFunctions []*model.Function
@@ -119,6 +133,7 @@ func (s *CppCodeGenerator) CreateVirtualFunctionPads(chunk *model.Chunk) {
 	}
 }
 
+// Adds default calling conventions to the specified chunk
 func (s *CppCodeGenerator) CreateCallingConventions(chunk *model.Chunk) {
 	for _, class := range chunk.Classes {
 		for _, function := range class.Functions {
@@ -141,6 +156,8 @@ func (s *CppCodeGenerator) CreateCallingConventions(chunk *model.Chunk) {
 	}
 }
 
+// Emits the code for a specific chunk.
+// Assumes that the input is well-filled and prepared.
 func (s *CppCodeGenerator) EmitCode(chunk *model.Chunk) {
 	s.Emitter.EmitHeader()
 
