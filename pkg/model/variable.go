@@ -6,10 +6,11 @@ type Variable struct {
 	Name         string
 	Type         string
 	MemoryOffset *uint64
+	Public       bool
 }
 
 func NewVariable() *Variable {
-	return &Variable{}
+	return &Variable{Public: true}
 }
 
 func NewVariablePad(memoryOffset uint64, size uint64) *Variable {
@@ -20,5 +21,6 @@ func NewVariablePad(memoryOffset uint64, size uint64) *Variable {
 		Name:         fmt.Sprintf("pad_%x[%d]", memoryOffset, size),
 		Type:         "char",
 		MemoryOffset: &addr,
+		Public:       false,
 	}
 }

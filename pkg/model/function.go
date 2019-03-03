@@ -17,10 +17,14 @@ type Function struct {
 	Params            []Parameter
 	CallingConvention CallingConvention
 	MemoryAddress     *uint64
+	Public            bool
 }
 
 func NewFunction(name string) *Function {
-	return &Function{Name: name}
+	return &Function{
+		Name:   name,
+		Public: true,
+	}
 }
 
 func NewFunctionPad(memoryOffset uint64) *Function {
@@ -32,6 +36,7 @@ func NewFunctionPad(memoryOffset uint64) *Function {
 		Modifier:          "virtual",
 		CallingConvention: "",
 		MemoryAddress:     &addr,
+		Public:            false,
 	}
 }
 

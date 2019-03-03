@@ -13,7 +13,8 @@ type CppCodeEmitter struct {
 	OutputFile *os.File
 	Writer     *bufio.Writer
 
-	TabIndex int
+	TabIndex      int
+	PublicContext bool
 }
 
 func NewCppCodeEmitter(path string) *CppCodeEmitter {
@@ -26,6 +27,7 @@ func NewCppCodeEmitter(path string) *CppCodeEmitter {
 	e.OutputFile = file
 	e.Writer = bufio.NewWriter(e.OutputFile)
 	e.TabIndex = 0
+	e.PublicContext = false
 
 	return e
 }
@@ -62,16 +64,34 @@ func (s *CppCodeEmitter) EmitLine(line string, separator bool) {
 	}
 }
 
-func (s *CppCodeEmitter) EmitPublicBlock() {
+func (s *CppCodeEmitter) EmitPublicBlockIfNecessary() {
+	if s.PublicContext {
+		return
+	}
+
 	s.TabIndex = s.TabIndex - 1 // temporally step back tab index
 	s.EmitLine("public:", false)
 	s.TabIndex = s.TabIndex + 1
+	s.PublicContext = true
 }
 
-func (s *CppCodeEmitter) EmitPrivateBlock() {
+func (s *CppCodeEmitter) EmitPrivateBlockIfNecessary() {
+	if !s.PublicContext {
+		return
+	}
+
 	s.TabIndex = s.TabIndex - 1 // temporally step back tab index
 	s.EmitLine("private:", false)
 	s.TabIndex = s.TabIndex + 1
+	s.PublicContext = false
+}
+
+func (s *CppCodeEmitter) EmitAccessBlock(public bool) {
+	if public {
+		s.EmitPublicBlockIfNecessary()
+	} else {
+		s.EmitPrivateBlockIfNecessary()
+	}
 }
 
 func (s *CppCodeEmitter) EmitIncludeStatement(includePath string) {
@@ -86,6 +106,8 @@ func (s *CppCodeEmitter) EmitClassDeclarationStart(className string, baseClasses
 		s.EmitLine(fmt.Sprintf("class %s\n{", className), false)
 	}
 	s.TabIndex = s.TabIndex + 1
+
+	s.EmitPublicBlockIfNecessary()
 }
 
 func (s *CppCodeEmitter) EmitClassDeclarationEnd() {
@@ -93,27 +115,34 @@ func (s *CppCodeEmitter) EmitClassDeclarationEnd() {
 	s.EmitLine("}", true)
 }
 
-func (s *CppCodeEmitter) EmitFunctionDeclaration(functionName string, returnType string, params []model.Parameter, memoryAddress uint64, callingConv string, inClass bool) {
-	s.EmitLine(fmt.Sprintf("inline %s %s(%s)", returnType, functionName, CppFunctionParametersToString(params)), false)
+func (s *CppCodeEmitter) EmitFunctionDeclaration(function *model.Function, inClass bool) {
+	s.EmitAccessBlock(function.Public)
+
+	s.EmitLine(fmt.Sprintf("inline %s %s(%s)", function.ReturnType, function.Name, CppFunctionParametersToString(function.Params)), false)
 	s.EmitLine("{", false)
 	s.TabIndex = s.TabIndex + 1
 
+	params := function.Params
 	if inClass {
 		params = append([]model.Parameter{model.Parameter{Name: "this", Type: "decltype(this)"}}, params...)
 	}
 
-	s.EmitLine(fmt.Sprintf("using Func_t = %s(%s *)(%s)", returnType, callingConv, CppFunctionParameterTypesToString(params)), true)
-	s.EmitLine(fmt.Sprintf("auto f = reinterpret_cast<Func_t>(0x%x)", memoryAddress), true)
+	s.EmitLine(fmt.Sprintf("using Func_t = %s(%s *)(%s)", function.ReturnType, function.CallingConvention, CppFunctionParameterTypesToString(params)), true)
+	s.EmitLine(fmt.Sprintf("auto f = reinterpret_cast<Func_t>(0x%x)", *function.MemoryAddress), true)
 	s.EmitLine(fmt.Sprintf("return f(%s)", CppFunctionParameterNamesToString(params)), true)
 
 	s.TabIndex = s.TabIndex - 1
 	s.EmitLine("}\n", false)
 }
 
-func (s *CppCodeEmitter) EmitVirtualFunctionDeclaration(functionName string, returnType string, params []model.Parameter, memoryOffset uint64, callingConv string) {
-	s.EmitLine(fmt.Sprintf("virtual %s %s(%s) = 0", returnType, functionName, CppFunctionParametersToString(params)), true)
+func (s *CppCodeEmitter) EmitVirtualFunctionDeclaration(function *model.Function) {
+	s.EmitAccessBlock(function.Public)
+
+	s.EmitLine(fmt.Sprintf("virtual %s %s(%s) = 0", function.ReturnType, function.Name, CppFunctionParametersToString(function.Params)), true)
 }
 
-func (s *CppCodeEmitter) EmitVariableDeclaration(name string, variableType string, memoryOffset uint64) {
-	s.EmitLine(fmt.Sprintf("%s %s; // offset 0x%X", variableType, name, memoryOffset), false)
+func (s *CppCodeEmitter) EmitVariableDeclaration(variable *model.Variable) {
+	s.EmitAccessBlock(variable.Public)
+
+	s.EmitLine(fmt.Sprintf("%s %s; // offset 0x%X", variable.Type, variable.Name, *variable.MemoryOffset), false)
 }

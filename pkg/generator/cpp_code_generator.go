@@ -147,25 +147,27 @@ func (s *CppCodeGenerator) EmitCode(chunk *model.Chunk) {
 	// Emit classes
 	for _, class := range chunk.Classes {
 		s.Emitter.EmitClassDeclarationStart(class.Name, class.BaseClasses)
-		s.Emitter.EmitPublicBlock()
 
 		// Emit virtual functions
+		s.Emitter.EmitLine("//////////////////////////////", false)
 		s.Emitter.EmitLineComment("Virtual functions")
 		for _, function := range class.VirtualFunctions {
-			s.Emitter.EmitVirtualFunctionDeclaration(function.Name, function.ReturnType, function.Params, *function.MemoryAddress, function.CallingConvention)
+			s.Emitter.EmitVirtualFunctionDeclaration(function)
 		}
 
 		// Emit functions
 		s.Emitter.EmitLine("", false)
+		s.Emitter.EmitLine("//////////////////////////////", false)
 		s.Emitter.EmitLineComment("Functions")
 		for _, function := range class.Functions {
-			s.Emitter.EmitFunctionDeclaration(function.Name, function.ReturnType, function.Params, *function.MemoryAddress, function.CallingConvention, true)
+			s.Emitter.EmitFunctionDeclaration(function, true)
 		}
 
 		// Emit variables
+		s.Emitter.EmitLine("//////////////////////////////", false)
 		s.Emitter.EmitLineComment("Variables")
 		for _, variable := range class.Variables {
-			s.Emitter.EmitVariableDeclaration(variable.Name, variable.Type, *variable.MemoryOffset)
+			s.Emitter.EmitVariableDeclaration(variable)
 		}
 
 		s.Emitter.EmitClassDeclarationEnd()
@@ -176,6 +178,6 @@ func (s *CppCodeGenerator) EmitCode(chunk *model.Chunk) {
 	for _, function := range chunk.GlobalFunctions {
 		s.Emitter.EmitLineComment("Global functions")
 
-		s.Emitter.EmitFunctionDeclaration(function.Name, function.ReturnType, function.Params, *function.MemoryAddress, function.CallingConvention, false)
+		s.Emitter.EmitFunctionDeclaration(function, false)
 	}
 }
