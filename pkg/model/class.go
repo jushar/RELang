@@ -8,6 +8,7 @@ type Class struct {
 	Functions        []*Function
 	VirtualFunctions []*Function
 	StaticFunctions  []*Function
+	RawBlocks        []*RawBlock
 }
 
 // Constructs a new class by the given name
@@ -37,4 +38,9 @@ func (s *Class) AddFunction(function *Function) {
 // Adds a variable (attribute) to the class
 func (s *Class) AddVariable(variable *Variable) {
 	s.Variables = append(s.Variables, variable)
+}
+
+// Adds a raw block to the class
+func (s *Class) AddRawBlock(rawBlock *RawBlock) {
+	s.RawBlocks = append(s.RawBlocks, rawBlock)
 }

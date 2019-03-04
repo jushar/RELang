@@ -116,3 +116,9 @@ func (s *BaseRELangListener) EnterImportExpression(ctx *ImportExpressionContext)
 
 // ExitImportExpression is called when production importExpression is exited.
 func (s *BaseRELangListener) ExitImportExpression(ctx *ImportExpressionContext) {}
+
+// EnterRawExpression is called when production rawExpression is entered.
+func (s *BaseRELangListener) EnterRawExpression(ctx *RawExpressionContext) {}
+
+// ExitRawExpression is called when production rawExpression is exited.
+func (s *BaseRELangListener) ExitRawExpression(ctx *RawExpressionContext) {}

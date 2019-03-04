@@ -116,7 +116,9 @@ func (s *CppCodeEmitter) EmitClassDeclarationEnd() {
 }
 
 func (s *CppCodeEmitter) EmitFunctionDeclaration(function *model.Function, inClass bool) {
-	s.EmitAccessBlock(function.Public)
+	if inClass {
+		s.EmitAccessBlock(function.Public)
+	}
 
 	s.EmitLine(fmt.Sprintf("inline %s %s(%s)", function.ReturnType, function.Name, CppFunctionParametersToString(function.Params)), false)
 	s.EmitLine("{", false)

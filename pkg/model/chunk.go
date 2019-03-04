@@ -5,6 +5,7 @@ type Chunk struct {
 	Classes         []*Class
 	GlobalFunctions []*Function
 	GlobalVariables []*Variable
+	RawBlocks       []*RawBlock
 }
 
 // Constructs a new chunk
@@ -25,4 +26,9 @@ func (s *Chunk) AddFunction(function *Function) {
 // Adds a global variable to the chunk
 func (s *Chunk) AddVariable(variable *Variable) {
 	s.GlobalVariables = append(s.GlobalVariables, variable)
+}
+
+// Adds a raw block to the chunk
+func (s *Chunk) AddRawBlock(rawBlock *RawBlock) {
+	s.RawBlocks = append(s.RawBlocks, rawBlock)
 }

@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"errors"
 	"strconv"
 
 	"github.com/Jusonex/RELang/pkg/model"
@@ -63,6 +64,10 @@ func (s *ChunkReader) ExitFunctionDeclaration(ctx *FunctionDeclarationContext) {
 	if inClass {
 		s.State.Class.AddFunction(s.State.Function)
 	} else {
+		if s.State.Function.MemoryAddress == nil {
+			panic(errors.New("global functions are required to have an address"))
+			// TODO: Show error if
+		}
 		s.State.Chunk.AddFunction(s.State.Function)
 	}
 
@@ -147,4 +152,16 @@ func (s *ChunkReader) EnterPointer(ctx *PointerContext) {
 
 func (s *ChunkReader) EnterPrimitiveType(ctx *PrimitiveTypeContext) {
 	s.State.VariableType = ctx.GetText()
+}
+
+func (s *ChunkReader) EnterRawExpression(ctx *RawExpressionContext) {
+	rawBlock := model.NewRawBlock(ctx.Block().GetText())
+
+	// TODO: It might be necessary to remove the outer {}-block
+
+	if s.ContextStack.Contains(CONTEXT_CLASS_DECL) {
+		s.State.Class.AddRawBlock(rawBlock)
+	} else {
+		s.State.Chunk.AddRawBlock(rawBlock)
+	}
 }

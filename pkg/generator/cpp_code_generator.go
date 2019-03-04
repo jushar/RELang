@@ -187,14 +187,28 @@ func (s *CppCodeGenerator) EmitCode(chunk *model.Chunk) {
 			s.Emitter.EmitVariableDeclaration(variable)
 		}
 
+		// Emit raw blocks
+		s.Emitter.EmitLine("//////////////////////////////", false)
+		s.Emitter.EmitLineComment("Raw blocks")
+		for _, rawBlock := range class.RawBlocks {
+			s.Emitter.EmitLine(rawBlock.Content, false)
+		}
+
 		s.Emitter.EmitClassDeclarationEnd()
 	}
 
 	// Emit global functions
 	s.Emitter.EmitLine("", false)
+	s.Emitter.EmitLine("//////////////////////////////", false)
+	s.Emitter.EmitLineComment("Global functions")
 	for _, function := range chunk.GlobalFunctions {
-		s.Emitter.EmitLineComment("Global functions")
-
 		s.Emitter.EmitFunctionDeclaration(function, false)
+	}
+
+	// Emit global raw blocks
+	s.Emitter.EmitLine("//////////////////////////////", false)
+	s.Emitter.EmitLineComment("Raw blocks")
+	for _, rawBlock := range chunk.RawBlocks {
+		s.Emitter.EmitLine(rawBlock.Content, false)
 	}
 }

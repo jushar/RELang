@@ -56,6 +56,9 @@ type RELangListener interface {
 	// EnterImportExpression is called when entering the importExpression production.
 	EnterImportExpression(c *ImportExpressionContext)
 
+	// EnterRawExpression is called when entering the rawExpression production.
+	EnterRawExpression(c *RawExpressionContext)
+
 	// ExitInit is called when exiting the init production.
 	ExitInit(c *InitContext)
 
@@ -103,4 +106,7 @@ type RELangListener interface {
 
 	// ExitImportExpression is called when exiting the importExpression production.
 	ExitImportExpression(c *ImportExpressionContext)
+
+	// ExitRawExpression is called when exiting the rawExpression production.
+	ExitRawExpression(c *RawExpressionContext)
 }
