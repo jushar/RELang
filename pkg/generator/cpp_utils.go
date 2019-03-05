@@ -22,9 +22,13 @@ func CppFunctionParametersToString(params []model.Parameter) string {
 }
 
 // Converts an array of cpp varaibles to a comma-separated list of parameter names
-func CppFunctionParameterNamesToString(params []model.Parameter) string {
+func CppFunctionParameterNamesToString(params []model.Parameter, perfectForward bool) string {
 	return strings.Join(mapCppParameters(params, func(param model.Parameter) string {
-		return param.Name
+		if perfectForward {
+			return "std::forward<" + param.Type + ">(" + param.Name + ")"
+		} else {
+			return param.Name
+		}
 	}), ", ")
 }
 

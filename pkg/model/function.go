@@ -38,7 +38,7 @@ func NewFunctionPad(memoryOffset uint64) *Function {
 	addr := memoryOffset
 
 	return &Function{
-		Name:              fmt.Sprintf("vpad_%x", memoryOffset),
+		Name:              fmt.Sprintf("_vpad_%x", memoryOffset),
 		ReturnType:        "void",
 		Modifier:          "virtual",
 		CallingConvention: "",
