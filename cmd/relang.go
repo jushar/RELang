@@ -12,6 +12,7 @@ import (
 type CliOptions struct {
 	InputPath  string `short:"p" long:"path" description:"Path to source file" required:"true"`
 	OutputPath string `short:"o" long:"out" description:"Path to output file" required:"true"`
+	Lint       bool `short:"l" long:"lint" description:"Lint-only mode"`
 }
 
 func main() {
@@ -42,7 +43,9 @@ func main() {
 	antlr.ParseTreeWalkerDefault.Walk(chunkReader, p.Init())
 
 	// Generate C++ code
-	generator := generator.NewCppCodeGenerator(options.OutputPath)
-	defer generator.Close()
-	generator.Generate(chunkReader.State.Chunk)
+	if !options.Lint {
+		generator := generator.NewCppCodeGenerator(options.OutputPath)
+		defer generator.Close()
+		generator.Generate(chunkReader.State.Chunk)
+	}
 }
