@@ -115,6 +115,10 @@ func (s *CppCodeEmitter) EmitClassDeclarationEnd() {
 	s.EmitLine("}", true)
 }
 
+func (s *CppCodeEmitter) EmitClassSizeAssertion(className string, expectedSize uint64) {
+	s.EmitLine(fmt.Sprintf("static_assert(sizeof(%s) == %X, \"Unexpected class size\")", className, expectedSize), true)
+}
+
 func (s *CppCodeEmitter) EmitFunctionDeclaration(function *model.Function, inClass bool) {
 	if inClass {
 		s.EmitAccessBlock(function.Public)

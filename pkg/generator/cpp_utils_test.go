@@ -20,7 +20,7 @@ func TestCppFunctionParameterNamesToString(t *testing.T) {
 	s := CppFunctionParameterNamesToString([]model.Parameter{
 		model.Parameter{Name: "param1", Type: "int8"},
 		model.Parameter{Name: "param2", Type: "int16"},
-	})
+	}, false)
 
 	assert.Equal(t, "param1, param2", s)
 }

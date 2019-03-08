@@ -7,6 +7,7 @@ type Variable struct {
 	Name         string
 	Type         string
 	MemoryOffset *uint64
+	Size         uint64
 	Public       bool
 }
 

@@ -44,3 +44,14 @@ func (s *Class) AddVariable(variable *Variable) {
 func (s *Class) AddRawBlock(rawBlock *RawBlock) {
 	s.RawBlocks = append(s.RawBlocks, rawBlock)
 }
+
+// Calculates the size of a class. This method has to be called after MemoryOffets are filled
+func (s *Class) GetSize() uint64 {
+	numVariables := len(s.Variables)
+	if numVariables == 0 {
+		return uint64(0)
+	}
+
+	lastVariable := s.Variables[numVariables-1]
+	return *lastVariable.MemoryOffset + lastVariable.Size
+}

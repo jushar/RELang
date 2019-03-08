@@ -62,6 +62,8 @@ func (s *CppCodeGenerator) CreateMemoryAddresses(chunk *model.Chunk) {
 				panic(err)
 			}
 			currentAddr = currentAddr + uint64(size)
+
+			variable.Size = uint64(size)
 		}
 
 		// Fill memory offsets for virtual methods
@@ -195,6 +197,7 @@ func (s *CppCodeGenerator) EmitCode(chunk *model.Chunk) {
 		}
 
 		s.Emitter.EmitClassDeclarationEnd()
+		s.Emitter.EmitClassSizeAssertion(class.Name, class.GetSize())
 	}
 
 	// Emit global functions
