@@ -23,7 +23,7 @@ classDeclaration : 'class' Name (':' Name  (',' Name)*)? '{' classExpression* '}
 classExpression : (functionDeclaration | variableDeclaration | rawExpression) Separator;
 
 importExpression : 'import' NormalString;
-rawExpression : 'raw' Block;
+rawExpression : RawBlock;
 
 // Lexer rules
 Name : [a-zA-Z_][a-zA-Z_0-9]*;
@@ -34,5 +34,6 @@ Separator: ';';
 Whitespace : [ \t\u000C\r\n]+ -> skip;
 LineComment : '//' ~[\r\n]* -> skip;
 BlockComment : '/*' .*? '*/' -> skip;
+RawBlock : '```' .+? '```';
 
-Block : '{' ( Block | ~[{}] )* '}' ;
+fragment NewLine : '\n' | '\r\n';

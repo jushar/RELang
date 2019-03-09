@@ -155,9 +155,14 @@ func (s *ChunkReader) EnterPrimitiveType(ctx *PrimitiveTypeContext) {
 }
 
 func (s *ChunkReader) EnterRawExpression(ctx *RawExpressionContext) {
-	rawBlock := model.NewRawBlock(ctx.Block().GetText())
+	code := ctx.RawBlock().GetText()
 
-	// TODO: It might be necessary to remove the outer {}-block
+	// Remove starting and ending ``` from the string
+	code = code[3 : len(code)-3]
+
+	// TODO: Fix indentation
+
+	rawBlock := model.NewRawBlock(code)
 
 	if s.ContextStack.Contains(CONTEXT_CLASS_DECL) {
 		s.State.Class.AddRawBlock(rawBlock)

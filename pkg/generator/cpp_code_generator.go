@@ -163,6 +163,9 @@ func (s *CppCodeGenerator) CreateCallingConventions(chunk *model.Chunk) {
 func (s *CppCodeGenerator) EmitCode(chunk *model.Chunk) {
 	s.Emitter.EmitHeader()
 
+	// Emit forward declarations
+	// TODO
+
 	// Emit classes
 	for _, class := range chunk.Classes {
 		s.Emitter.EmitClassDeclarationStart(class.Name, class.BaseClasses)

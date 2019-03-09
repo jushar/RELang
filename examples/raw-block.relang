@@ -1,9 +1,9 @@
 void g() @ 0xBEAF;
 
-raw {
+```
     if (true) {
         echo "Hello World";
     }{}
-};
+```;
 
 
