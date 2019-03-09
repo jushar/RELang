@@ -51,3 +51,20 @@ func NewFunctionPad(memoryOffset uint64) *Function {
 func (s *Function) AddParameter(name string, parameterType string) {
 	s.Params = append(s.Params, Parameter{Name: name, Type: parameterType})
 }
+
+// GetRequiredForwardDeclarations returns a list of pointer types
+func (s *Function) GetRequiredForwardDeclarations() []string {
+	var forwardDeclarations []string
+
+	for _, param := range s.Params {
+		if IsTypePointer(param.Type) {
+			forwardDeclarations = append(forwardDeclarations, GetTypeFromPointer(param.Type))
+		}
+	}
+
+	if IsTypePointer(s.ReturnType) {
+		forwardDeclarations = append(forwardDeclarations, GetTypeFromPointer(s.ReturnType))
+	}
+
+	return forwardDeclarations
+}

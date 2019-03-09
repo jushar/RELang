@@ -98,6 +98,10 @@ func (s *CppCodeEmitter) EmitIncludeStatement(includePath string) {
 	s.EmitLine("#include \""+includePath+"\"", false)
 }
 
+func (s *CppCodeEmitter) EmitForwardDeclaration(className string) {
+	s.EmitLine("class "+className, true)
+}
+
 func (s *CppCodeEmitter) EmitClassDeclarationStart(className string, baseClasses []string) {
 	if len(baseClasses) > 0 {
 		baseClassEnumeration := strings.Join(baseClasses, ", public ")

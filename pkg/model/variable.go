@@ -28,3 +28,14 @@ func NewVariablePad(memoryOffset uint64, size uint64) *Variable {
 		Public:       false,
 	}
 }
+
+// GetRequiredForwardDeclarations returns a list of pointer types
+func (s *Variable) GetRequiredForwardDeclarations() []string {
+	var forwardDeclarations []string
+
+	if IsTypePointer(s.Type) {
+		forwardDeclarations = append(forwardDeclarations, GetTypeFromPointer(s.Type))
+	}
+
+	return forwardDeclarations
+}

@@ -1,4 +1,4 @@
-package generator
+package model
 
 import "errors"
 
@@ -22,7 +22,7 @@ const POINTER_SIZE uint8 = 4
 
 // Returns the size of an inbuilt type
 func GetInbuiltTypeSize(typeName string) (uint8, error) {
-	if typeName[len(typeName)-1] == '*' {
+	if IsTypePointer(typeName) {
 		return POINTER_SIZE, nil
 	}
 
@@ -31,4 +31,18 @@ func GetInbuiltTypeSize(typeName string) (uint8, error) {
 	}
 
 	return 0, errors.New("not an inbuilt type")
+}
+
+// IsTypePointer checks whether or not a type is a pointer
+func IsTypePointer(typeName string) bool {
+	return typeName[len(typeName)-1] == '*'
+}
+
+// GetTypeFromPointer returns the type name without the pointer asterisks
+func GetTypeFromPointer(typeName string) string {
+	if !IsTypePointer(typeName) {
+		panic("not a pointer")
+	}
+
+	return typeName[:len(typeName)-1]
 }
