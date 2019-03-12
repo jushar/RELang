@@ -1,5 +1,7 @@
 # RELang
-RELang is a domain-specific language to describe memory interfaces to binary executables and transpiles to C++11. The acronym _RELang_ stands for _Reverse Engineering Language_.
+![Build Status](https://img.shields.io/travis/Jusonex/RELang.svg?logo=travis)
+
+RELang is a domain-specific language that allows you to describe memory interfaces to binary executables and transpiles to C++11. The acronym _RELang_ stands for _Reverse Engineering Language_.
 
 Writing binary interfaces for existing applications you don't have the source of can be annoying with C++ only and either needs a lot of boilerplate code or more generic approaches tend to break auto-completion in IDEs.   
 Instead, this project follows a different approach: The required interfaces are all written in _RELang_, the _RELang_ compiler is integrated in your project's toolchain and generates C++ code. This C++ code is then included in your project and you can continue as usual.
