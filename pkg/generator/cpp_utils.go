@@ -38,3 +38,33 @@ func CppFunctionParameterTypesToString(params []model.Parameter) string {
 		return param.Type
 	}), ", ")
 }
+
+// ApplyForAllFunctions applies a functor to all types of functions (global/class, virtual/non-virtual)
+func ApplyForAllFunctions(chunk *model.Chunk, f func(*model.Function)) {
+	for _, class := range chunk.Classes {
+		for _, function := range class.Functions {
+			f(function)
+		}
+
+		for _, function := range class.VirtualFunctions {
+			f(function)
+		}
+	}
+
+	for _, function := range chunk.GlobalFunctions {
+		f(function)
+	}
+}
+
+// ApplyForAllVariables applies a functor to all types of variables (global/class)
+func ApplyForAllVariables(chunk *model.Chunk, f func(*model.Variable)) {
+	for _, class := range chunk.Classes {
+		for _, variable := range class.Variables {
+			f(variable)
+		}
+	}
+
+	for _, variable := range chunk.GlobalVariables {
+		f(variable)
+	}
+}

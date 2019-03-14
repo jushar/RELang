@@ -38,6 +38,7 @@ func (s *CppCodeGenerator) Generate(chunk *model.Chunk) {
 	s.CreateVariablePads(chunk)
 	s.CreateVirtualFunctionPads(chunk)
 	s.CreateCallingConventions(chunk)
+	s.ApplyTypeTransformations(chunk)
 
 	// After preperations are done, emit the code as is
 	s.EmitCode(chunk)
@@ -156,6 +157,16 @@ func (s *CppCodeGenerator) CreateCallingConventions(chunk *model.Chunk) {
 			function.CallingConvention = DEFAULT_FUNCTION_CALLING_CONVENTION
 		}
 	}
+}
+
+// ApplyTypeTransformations applies available type information to functions and variables in the chunk
+func (s *CppCodeGenerator) ApplyTypeTransformations(chunk *model.Chunk) {
+	ApplyForAllFunctions(chunk, func(function *model.Function) {
+		ApplyFunctionTypeTransformations(function)
+	})
+	ApplyForAllVariables(chunk, func(variable *model.Variable) {
+		ApplyVariableTypeTransformations(variable)
+	})
 }
 
 func (s *CppCodeGenerator) GetRequiredForwardDeclarations(chunk *model.Chunk) []string {
