@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const OUTPUT_FILE = "../../test/testoutput.h"
+const outputFile = "../../test/testoutput.h"
 
 func prepareTestChunk() *model.Chunk {
 	chunk := model.NewChunk()
@@ -41,32 +41,32 @@ func prepareTestChunk() *model.Chunk {
 }
 
 func TestConstructValidGenerator(t *testing.T) {
-	gen := NewCppCodeGenerator(OUTPUT_FILE)
+	gen := NewCppCodeGenerator(outputFile)
 	defer gen.Close()
 
 	assert.NotNil(t, gen.Emitter)
-	_, err := os.Stat(OUTPUT_FILE)
+	_, err := os.Stat(outputFile)
 	assert.Nil(t, err)
 }
 
 func TestGeneratesChunk(t *testing.T) {
-	gen := NewCppCodeGenerator(OUTPUT_FILE)
+	gen := NewCppCodeGenerator(outputFile)
 	chunk := prepareTestChunk()
 
 	gen.Generate(chunk)
 	gen.Close()
 
-	stat, err := os.Stat(OUTPUT_FILE)
+	stat, err := os.Stat(outputFile)
 	assert.Nil(t, err)
 	assert.True(t, stat.Size() > 100)
 }
 
 func TestCreatesMemoryAddresses(t *testing.T) {
-	gen := NewCppCodeGenerator(OUTPUT_FILE)
+	gen := NewCppCodeGenerator(outputFile)
 	defer gen.Close()
 	chunk := prepareTestChunk()
 
-	gen.CreateMemoryAddresses(chunk)
+	gen.createMemoryAddresses(chunk)
 
 	variables := chunk.Classes[0].Variables
 	assert.Equal(t, uint64(0), *variables[0].MemoryOffset)
@@ -78,12 +78,12 @@ func TestCreatesMemoryAddresses(t *testing.T) {
 }
 
 func TestCreatesVariablePads(t *testing.T) {
-	gen := NewCppCodeGenerator(OUTPUT_FILE)
+	gen := NewCppCodeGenerator(outputFile)
 	defer gen.Close()
 	chunk := prepareTestChunk()
 
-	gen.CreateMemoryAddresses(chunk)
-	gen.CreateVariablePads(chunk)
+	gen.createMemoryAddresses(chunk)
+	gen.createVariablePads(chunk)
 
 	variables := chunk.Classes[0].Variables
 	assert.Equal(t, 5, len(variables))
