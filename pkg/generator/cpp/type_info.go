@@ -1,4 +1,4 @@
-package generator
+package cpp
 
 import (
 	"github.com/Jusonex/RELang/pkg/model"

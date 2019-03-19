@@ -3,21 +3,21 @@ package main
 import (
 	"os"
 
-	"github.com/Jusonex/RELang/pkg/generator"
+	"github.com/Jusonex/RELang/pkg/generator/cpp"
 	"github.com/Jusonex/RELang/pkg/parser"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	flags "github.com/jessevdk/go-flags"
 )
 
-type CliOptions struct {
+type cliOptions struct {
 	InputPath  string `short:"p" long:"path" description:"Path to source file" required:"true"`
 	OutputPath string `short:"o" long:"out" description:"Path to output file" required:"true"`
-	Lint       bool `short:"l" long:"lint" description:"Lint-only mode"`
+	Lint       bool   `short:"l" long:"lint" description:"Lint-only mode"`
 }
 
 func main() {
 	// Parse arguments
-	options := CliOptions{}
+	options := cliOptions{}
 	_, err := flags.ParseArgs(&options, os.Args)
 	if err != nil {
 		panic(err)
@@ -44,7 +44,7 @@ func main() {
 
 	// Generate C++ code
 	if !options.Lint {
-		generator := generator.NewCppCodeGenerator(options.OutputPath)
+		generator := cpp.NewCodeGenerator(options.OutputPath)
 		defer generator.Close()
 		generator.Generate(chunkReader.State.Chunk)
 	}

@@ -1,15 +1,16 @@
-package generator
+package cpp
 
 import (
+	generator "github.com/Jusonex/RELang/pkg/generator"
 	"github.com/Jusonex/RELang/pkg/model"
 )
 
-// CppCodeGenerator holds information about the C++ code generator
+// CodeGenerator holds information about the C++ code generator
 // that accepts the parsed chunk as input and
 // generates a C++ header file for it
-type CppCodeGenerator struct {
+type CodeGenerator struct {
 	// Low-level code emitter
-	Emitter *CppCodeEmitter
+	Emitter *CodeEmitter
 }
 
 // TODO: Make configurable for x64 calling convention
@@ -20,20 +21,20 @@ const (
 	DefaultMethodCallingConvention = "__thiscall"
 )
 
-// NewCppCodeGenerator constructs a new cpp code generator
-func NewCppCodeGenerator(path string) *CppCodeGenerator {
-	return &CppCodeGenerator{
-		Emitter: NewCppCodeEmitter(path),
+// NewCodeGenerator constructs a new cpp code generator
+func NewCodeGenerator(path string) *CodeGenerator {
+	return &CodeGenerator{
+		Emitter: NewCodeEmitter(path),
 	}
 }
 
 // Close disposes associated resources
-func (s *CppCodeGenerator) Close() {
+func (s *CodeGenerator) Close() {
 	s.Emitter.Close()
 }
 
 // Generate invokes the generator for a specific chunk
-func (s *CppCodeGenerator) Generate(chunk *model.Chunk) {
+func (s *CodeGenerator) Generate(chunk *model.Chunk) {
 	// Prepare chunk for code generation
 	// e.g. add missing fields
 	s.createMemoryAddresses(chunk)
@@ -47,7 +48,7 @@ func (s *CppCodeGenerator) Generate(chunk *model.Chunk) {
 }
 
 // Fills missing attributes for a chunk in subsequent manner
-func (s *CppCodeGenerator) createMemoryAddresses(chunk *model.Chunk) {
+func (s *CodeGenerator) createMemoryAddresses(chunk *model.Chunk) {
 	for _, class := range chunk.Classes {
 		currentAddr := uint64(0)
 
@@ -85,7 +86,7 @@ func (s *CppCodeGenerator) createMemoryAddresses(chunk *model.Chunk) {
 }
 
 // Creates padding attributes for field gaps for the specified chunk
-func (s *CppCodeGenerator) createVariablePads(chunk *model.Chunk) {
+func (s *CodeGenerator) createVariablePads(chunk *model.Chunk) {
 	for _, class := range chunk.Classes {
 		var newVariables []*model.Variable
 
@@ -113,7 +114,7 @@ func (s *CppCodeGenerator) createVariablePads(chunk *model.Chunk) {
 }
 
 // Creates pads for virtual functions
-func (s *CppCodeGenerator) createVirtualFunctionPads(chunk *model.Chunk) {
+func (s *CodeGenerator) createVirtualFunctionPads(chunk *model.Chunk) {
 	for _, class := range chunk.Classes {
 		var newFunctions []*model.Function
 
@@ -139,8 +140,8 @@ func (s *CppCodeGenerator) createVirtualFunctionPads(chunk *model.Chunk) {
 }
 
 // Adds default calling conventions to the specified chunk
-func (s *CppCodeGenerator) createCallingConventions(chunk *model.Chunk) {
-	ApplyForAllFunctions(chunk, func(function *model.Function, method bool, virtual bool) {
+func (s *CodeGenerator) createCallingConventions(chunk *model.Chunk) {
+	generator.ApplyForAllFunctions(chunk, func(function *model.Function, method bool, virtual bool) {
 		if function.CallingConvention == "" {
 			if method {
 				function.CallingConvention = DefaultMethodCallingConvention
@@ -152,18 +153,18 @@ func (s *CppCodeGenerator) createCallingConventions(chunk *model.Chunk) {
 }
 
 // ApplyTypeTransformations applies available type information to functions and variables in the chunk
-func (s *CppCodeGenerator) applyTypeTransformations(chunk *model.Chunk) {
-	ApplyForAllFunctions(chunk, func(function *model.Function, method bool, virtual bool) {
+func (s *CodeGenerator) applyTypeTransformations(chunk *model.Chunk) {
+	generator.ApplyForAllFunctions(chunk, func(function *model.Function, method bool, virtual bool) {
 		ApplyFunctionTypeTransformations(function)
 	})
-	ApplyForAllVariables(chunk, func(variable *model.Variable) {
+	generator.ApplyForAllVariables(chunk, func(variable *model.Variable) {
 		ApplyVariableTypeTransformations(variable)
 	})
 }
 
 // GetRequiredForwardDeclarations returns the required forward declarations
 // for a given chunk
-func (s *CppCodeGenerator) GetRequiredForwardDeclarations(chunk *model.Chunk) []string {
+func (s *CodeGenerator) GetRequiredForwardDeclarations(chunk *model.Chunk) []string {
 	var forwardDeclarations []string // TODO: Use a Set for this
 
 	for _, class := range chunk.Classes {
@@ -193,7 +194,7 @@ func (s *CppCodeGenerator) GetRequiredForwardDeclarations(chunk *model.Chunk) []
 
 // Emits the code for a specific chunk.
 // Assumes that the input is well-filled and prepared.
-func (s *CppCodeGenerator) emitCode(chunk *model.Chunk) {
+func (s *CodeGenerator) emitCode(chunk *model.Chunk) {
 	s.Emitter.EmitHeader()
 	s.Emitter.EmitIncludeGuard()
 
