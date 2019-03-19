@@ -1,7 +1,7 @@
 package cpp
 
 import (
-	generator "github.com/Jusonex/RELang/pkg/generator"
+	"github.com/Jusonex/RELang/pkg/generator"
 	"github.com/Jusonex/RELang/pkg/model"
 )
 
@@ -10,7 +10,8 @@ import (
 // generates a C++ header file for it
 type CodeGenerator struct {
 	// Low-level code emitter
-	Emitter *CodeEmitter
+	Emitter      *CodeEmitter
+	Transformers []generator.Transformer
 }
 
 // TODO: Make configurable for x64 calling convention
@@ -25,6 +26,13 @@ const (
 func NewCodeGenerator(path string) *CodeGenerator {
 	return &CodeGenerator{
 		Emitter: NewCodeEmitter(path),
+		Transformers: []generator.Transformer{
+			&TransformerMemoryAddresses{},
+			&TransformerVariablePads{},
+			&TransformerVirtualFunctionPads{},
+			&TransformerCallingConventions{},
+			&TransformerTypeTransformations{},
+		},
 	}
 }
 
@@ -36,130 +44,13 @@ func (s *CodeGenerator) Close() {
 // Generate invokes the generator for a specific chunk
 func (s *CodeGenerator) Generate(chunk *model.Chunk) {
 	// Prepare chunk for code generation
-	// e.g. add missing fields
-	s.createMemoryAddresses(chunk)
-	s.createVariablePads(chunk)
-	s.createVirtualFunctionPads(chunk)
-	s.createCallingConventions(chunk)
-	s.applyTypeTransformations(chunk)
+	// by executing all transformers
+	for _, transformer := range s.Transformers {
+		transformer.Transform(chunk)
+	}
 
 	// After preperations are done, emit the code as is
 	s.emitCode(chunk)
-}
-
-// Fills missing attributes for a chunk in subsequent manner
-func (s *CodeGenerator) createMemoryAddresses(chunk *model.Chunk) {
-	for _, class := range chunk.Classes {
-		currentAddr := uint64(0)
-
-		// Fill memory offsets for class variables
-		for _, variable := range class.Variables {
-			if variable.MemoryOffset != nil {
-				currentAddr = *variable.MemoryOffset
-			} else {
-				addr := currentAddr
-				variable.MemoryOffset = &addr
-			}
-
-			size, err := model.GetInbuiltTypeSize(variable.Type)
-			if err != nil { // TODO: Support custom types
-				panic(err)
-			}
-			currentAddr = currentAddr + uint64(size)
-
-			variable.Size = uint64(size)
-		}
-
-		// Fill memory offsets for virtual methods
-		currentAddr = uint64(0)
-		for _, function := range class.VirtualFunctions {
-			if function.MemoryAddress != nil {
-				currentAddr = *function.MemoryAddress
-			} else {
-				addr := currentAddr
-				function.MemoryAddress = &addr
-			}
-
-			currentAddr = currentAddr + uint64(model.POINTER_SIZE)
-		}
-	}
-}
-
-// Creates padding attributes for field gaps for the specified chunk
-func (s *CodeGenerator) createVariablePads(chunk *model.Chunk) {
-	for _, class := range chunk.Classes {
-		var newVariables []*model.Variable
-
-		currentAddr := uint64(0)
-		for _, variable := range class.Variables {
-			size, err := model.GetInbuiltTypeSize(variable.Type)
-			if err != nil { // TODO: Support custom types
-				panic(err)
-			}
-
-			// If the stored memory offset doesn't match the theoretical,
-			// we have to insert a pad
-			if diff := *variable.MemoryOffset - currentAddr; diff > 0 {
-				newVariables = append(newVariables, model.NewVariablePad(currentAddr, diff))
-				currentAddr = currentAddr + diff
-			}
-
-			// Add actual variable
-			newVariables = append(newVariables, variable)
-			currentAddr = currentAddr + uint64(size)
-		}
-
-		class.Variables = newVariables
-	}
-}
-
-// Creates pads for virtual functions
-func (s *CodeGenerator) createVirtualFunctionPads(chunk *model.Chunk) {
-	for _, class := range chunk.Classes {
-		var newFunctions []*model.Function
-
-		currentAddr := uint64(0)
-		for _, function := range class.VirtualFunctions {
-			// If the stored memory offset doesn't match the theoretical,
-			// we have to insert a pad
-			if diff := *function.MemoryAddress - currentAddr; diff > 0 {
-				for i := uint64(0); i < diff/uint64(model.POINTER_SIZE); i = i + 1 {
-					newFunctions = append(newFunctions, model.NewFunctionPad(currentAddr))
-					currentAddr = currentAddr + uint64(model.POINTER_SIZE)
-				}
-				// TODO: Throw error if not multiple of POINTER_SIZE or interleaving
-			}
-
-			// Add actual variable
-			newFunctions = append(newFunctions, function)
-			currentAddr = currentAddr + uint64(model.POINTER_SIZE)
-		}
-
-		class.VirtualFunctions = newFunctions
-	}
-}
-
-// Adds default calling conventions to the specified chunk
-func (s *CodeGenerator) createCallingConventions(chunk *model.Chunk) {
-	generator.ApplyForAllFunctions(chunk, func(function *model.Function, method bool, virtual bool) {
-		if function.CallingConvention == "" {
-			if method {
-				function.CallingConvention = DefaultMethodCallingConvention
-			} else {
-				function.CallingConvention = DefaultFunctionCallingConvention
-			}
-		}
-	})
-}
-
-// ApplyTypeTransformations applies available type information to functions and variables in the chunk
-func (s *CodeGenerator) applyTypeTransformations(chunk *model.Chunk) {
-	generator.ApplyForAllFunctions(chunk, func(function *model.Function, method bool, virtual bool) {
-		ApplyFunctionTypeTransformations(function)
-	})
-	generator.ApplyForAllVariables(chunk, func(variable *model.Variable) {
-		ApplyVariableTypeTransformations(variable)
-	})
 }
 
 // GetRequiredForwardDeclarations returns the required forward declarations
