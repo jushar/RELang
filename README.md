@@ -165,12 +165,12 @@ The raw block just injects a piece of code into the generated C++ code without m
 
 ```cpp
 class PlantFactory {
-    raw {
+    ```
         template<std::size_t N> 
         void AllocatePlants() {
             // Do some stuff
         }
-    }
+    ```
 };
 ```
 

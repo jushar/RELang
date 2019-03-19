@@ -41,7 +41,7 @@ func prepareTestChunk() *model.Chunk {
 }
 
 func TestConstructValidGenerator(t *testing.T) {
-	gen := NewCppCodeGenerator(outputFile)
+	gen := NewCodeGenerator(outputFile)
 	defer gen.Close()
 
 	assert.NotNil(t, gen.Emitter)
@@ -50,7 +50,7 @@ func TestConstructValidGenerator(t *testing.T) {
 }
 
 func TestGeneratesChunk(t *testing.T) {
-	gen := NewCppCodeGenerator(outputFile)
+	gen := NewCodeGenerator(outputFile)
 	chunk := prepareTestChunk()
 
 	gen.Generate(chunk)
@@ -62,7 +62,7 @@ func TestGeneratesChunk(t *testing.T) {
 }
 
 func TestCreatesMemoryAddresses(t *testing.T) {
-	gen := NewCppCodeGenerator(outputFile)
+	gen := NewCodeGenerator(outputFile)
 	defer gen.Close()
 	chunk := prepareTestChunk()
 
@@ -78,7 +78,7 @@ func TestCreatesMemoryAddresses(t *testing.T) {
 }
 
 func TestCreatesVariablePads(t *testing.T) {
-	gen := NewCppCodeGenerator(outputFile)
+	gen := NewCodeGenerator(outputFile)
 	defer gen.Close()
 	chunk := prepareTestChunk()
 

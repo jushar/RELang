@@ -6,7 +6,7 @@ import (
 	"github.com/Jusonex/RELang/pkg/model"
 )
 
-func mapCppParameters(vs []model.Parameter, f func(model.Parameter) string) []string {
+func mapParameters(vs []model.Parameter, f func(model.Parameter) string) []string {
 	vsm := make([]string, len(vs))
 	for i, v := range vs {
 		vsm[i] = f(v)
@@ -14,16 +14,16 @@ func mapCppParameters(vs []model.Parameter, f func(model.Parameter) string) []st
 	return vsm
 }
 
-// CppFunctionParametersToString converts an array of cpp variables to a fully typed comma-separated function parameter string
-func CppFunctionParametersToString(params []model.Parameter) string {
-	return strings.Join(mapCppParameters(params, func(param model.Parameter) string {
+// FunctionParametersToString converts an array of cpp variables to a fully typed comma-separated function parameter string
+func FunctionParametersToString(params []model.Parameter) string {
+	return strings.Join(mapParameters(params, func(param model.Parameter) string {
 		return param.Type + " " + param.Name
 	}), ", ")
 }
 
-// CppFunctionParameterNamesToString converts an array of cpp varaibles to a comma-separated list of parameter names
-func CppFunctionParameterNamesToString(params []model.Parameter, perfectForward bool) string {
-	return strings.Join(mapCppParameters(params, func(param model.Parameter) string {
+// FunctionParameterNamesToString converts an array of cpp varaibles to a comma-separated list of parameter names
+func FunctionParameterNamesToString(params []model.Parameter, perfectForward bool) string {
+	return strings.Join(mapParameters(params, func(param model.Parameter) string {
 		if perfectForward {
 			return "std::forward<" + param.Type + ">(" + param.Name + ")"
 		}
@@ -32,9 +32,9 @@ func CppFunctionParameterNamesToString(params []model.Parameter, perfectForward 
 	}), ", ")
 }
 
-// CppFunctionParameterTypesToString converts an array of cpp varaibles to a comma-separated list of parameter types
-func CppFunctionParameterTypesToString(params []model.Parameter) string {
-	return strings.Join(mapCppParameters(params, func(param model.Parameter) string {
+// FunctionParameterTypesToString converts an array of cpp varaibles to a comma-separated list of parameter types
+func FunctionParameterTypesToString(params []model.Parameter) string {
+	return strings.Join(mapParameters(params, func(param model.Parameter) string {
 		return param.Type
 	}), ", ")
 }

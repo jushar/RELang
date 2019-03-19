@@ -136,7 +136,7 @@ func (s *CodeEmitter) EmitFunctionDeclaration(function *model.Function, inClass 
 		s.EmitAccessBlock(function.Public)
 	}
 
-	s.EmitLine(fmt.Sprintf("inline %s %s(%s)", function.ReturnType, function.Name, CppFunctionParametersToString(function.Params)), false)
+	s.EmitLine(fmt.Sprintf("inline %s %s(%s)", function.ReturnType, function.Name, FunctionParametersToString(function.Params)), false)
 	s.EmitLine("{", false)
 	s.TabIndex = s.TabIndex + 1
 
@@ -145,9 +145,9 @@ func (s *CodeEmitter) EmitFunctionDeclaration(function *model.Function, inClass 
 		params = append([]model.Parameter{model.Parameter{Name: "this", Type: "decltype(this)"}}, params...)
 	}
 
-	s.EmitLine(fmt.Sprintf("using Func_t = %s(%s *)(%s)", function.ReturnType, function.CallingConvention, CppFunctionParameterTypesToString(params)), true)
+	s.EmitLine(fmt.Sprintf("using Func_t = %s(%s *)(%s)", function.ReturnType, function.CallingConvention, FunctionParameterTypesToString(params)), true)
 	s.EmitLine(fmt.Sprintf("auto f = reinterpret_cast<Func_t>(0x%x)", *function.MemoryAddress), true)
-	s.EmitLine(fmt.Sprintf("return f(%s)", CppFunctionParameterNamesToString(params, true)), true)
+	s.EmitLine(fmt.Sprintf("return f(%s)", FunctionParameterNamesToString(params, true)), true)
 
 	s.TabIndex = s.TabIndex - 1
 	s.EmitLine("}\n", false)
@@ -156,7 +156,7 @@ func (s *CodeEmitter) EmitFunctionDeclaration(function *model.Function, inClass 
 func (s *CodeEmitter) EmitVirtualFunctionDeclaration(function *model.Function) {
 	s.EmitAccessBlock(function.Public)
 
-	s.EmitLine(fmt.Sprintf("virtual %s %s(%s) = 0", function.ReturnType, function.Name, CppFunctionParametersToString(function.Params)), true)
+	s.EmitLine(fmt.Sprintf("virtual %s %s(%s) = 0", function.ReturnType, function.Name, FunctionParametersToString(function.Params)), true)
 }
 
 func (s *CodeEmitter) EmitVariableDeclaration(variable *model.Variable) {

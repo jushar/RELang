@@ -8,7 +8,7 @@ import (
 )
 
 func TestCppFunctionParametersToString(t *testing.T) {
-	s := CppFunctionParametersToString([]model.Parameter{
+	s := FunctionParametersToString([]model.Parameter{
 		model.Parameter{Name: "param1", Type: "int8"},
 		model.Parameter{Name: "param2", Type: "int16"},
 	})
@@ -17,7 +17,7 @@ func TestCppFunctionParametersToString(t *testing.T) {
 }
 
 func TestCppFunctionParameterNamesToString(t *testing.T) {
-	s := CppFunctionParameterNamesToString([]model.Parameter{
+	s := FunctionParameterNamesToString([]model.Parameter{
 		model.Parameter{Name: "param1", Type: "int8"},
 		model.Parameter{Name: "param2", Type: "int16"},
 	}, false)
@@ -26,7 +26,7 @@ func TestCppFunctionParameterNamesToString(t *testing.T) {
 }
 
 func TestCppFunctionParameterTypesToString(t *testing.T) {
-	s := CppFunctionParameterTypesToString([]model.Parameter{
+	s := FunctionParameterTypesToString([]model.Parameter{
 		model.Parameter{Name: "param1", Type: "int8"},
 		model.Parameter{Name: "param2", Type: "int16"},
 	})
