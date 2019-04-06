@@ -166,5 +166,5 @@ func (s *CodeEmitter) EmitClassVariableDeclaration(variable *model.Variable) {
 }
 
 func (s *CodeEmitter) EmitGlobalVariableDeclaration(variable *model.Variable) {
-	s.EmitLine(fmt.Sprintf("%s& %s = *(%s*)0x%X", variable.Type, variable.Name, variable.Type, *variable.MemoryOffset), true)
+	s.EmitLine(fmt.Sprintf("inline %s& %s = *(%s*)0x%X", variable.Type, variable.Name, variable.Type, *variable.MemoryOffset), true)
 }
