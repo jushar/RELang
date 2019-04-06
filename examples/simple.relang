@@ -1,1 +1,3 @@
 int64 Sum(int32 a, int32 b) @ 0x1234AC;
+
+int32 g_numPlayers @ 0xABC;

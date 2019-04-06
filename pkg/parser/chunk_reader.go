@@ -116,6 +116,10 @@ func (s *ChunkReader) ExitVariableDeclaration(ctx *VariableDeclarationContext) {
 	if inClass {
 		s.State.Class.AddVariable(s.State.Variable)
 	} else {
+		if s.State.Variable.MemoryOffset == nil {
+			panic("no memory address given for global variable") // TODO: Log error
+		}
+
 		s.State.Chunk.AddVariable(s.State.Variable)
 	}
 

@@ -94,12 +94,14 @@ func (s *CodeGenerator) emitCode(chunk *model.Chunk) {
 	s.Emitter.EmitLine("", false)
 
 	// Emit forward declarations
-	s.Emitter.EmitLine("//////////////////////////////", false)
-	s.Emitter.EmitLineComment("Forward declarations")
-	for _, ptrType := range s.GetRequiredForwardDeclarations(chunk) {
-		s.Emitter.EmitForwardDeclaration(ptrType)
+	if forwardDecls := s.GetRequiredForwardDeclarations(chunk); len(forwardDecls) > 0 {
+		s.Emitter.EmitLine("//////////////////////////////", false)
+		s.Emitter.EmitLineComment("Forward declarations")
+		for _, ptrType := range s.GetRequiredForwardDeclarations(chunk) {
+			s.Emitter.EmitForwardDeclaration(ptrType)
+		}
+		s.Emitter.EmitLine("", false)
 	}
-	s.Emitter.EmitLine("", false)
 
 	// Emit classes
 	for _, class := range chunk.Classes {
@@ -124,7 +126,7 @@ func (s *CodeGenerator) emitCode(chunk *model.Chunk) {
 		s.Emitter.EmitLine("//////////////////////////////", false)
 		s.Emitter.EmitLineComment("Variables")
 		for _, variable := range class.Variables {
-			s.Emitter.EmitVariableDeclaration(variable)
+			s.Emitter.EmitClassVariableDeclaration(variable)
 		}
 
 		// Emit raw blocks
@@ -139,17 +141,32 @@ func (s *CodeGenerator) emitCode(chunk *model.Chunk) {
 	}
 
 	// Emit global functions
-	s.Emitter.EmitLine("", false)
-	s.Emitter.EmitLine("//////////////////////////////", false)
-	s.Emitter.EmitLineComment("Global functions")
-	for _, function := range chunk.GlobalFunctions {
-		s.Emitter.EmitFunctionDeclaration(function, false)
+	if len(chunk.GlobalFunctions) > 0 {
+		s.Emitter.EmitLine("", false)
+		s.Emitter.EmitLine("//////////////////////////////", false)
+		s.Emitter.EmitLineComment("Global functions")
+		for _, function := range chunk.GlobalFunctions {
+			s.Emitter.EmitFunctionDeclaration(function, false)
+		}
+	}
+
+	// Emit global variables
+	if len(chunk.GlobalVariables) > 0 {
+		s.Emitter.EmitLine("", false)
+		s.Emitter.EmitLine("//////////////////////////////", false)
+		s.Emitter.EmitLineComment("Global variables")
+		for _, variable := range chunk.GlobalVariables {
+			s.Emitter.EmitGlobalVariableDeclaration(variable)
+		}
 	}
 
 	// Emit global raw blocks
-	s.Emitter.EmitLine("//////////////////////////////", false)
-	s.Emitter.EmitLineComment("Raw blocks")
-	for _, rawBlock := range chunk.RawBlocks {
-		s.Emitter.EmitLine(rawBlock.Content, false)
+	if len(chunk.RawBlocks) > 0 {
+		s.Emitter.EmitLine("", false)
+		s.Emitter.EmitLine("//////////////////////////////", false)
+		s.Emitter.EmitLineComment("Raw blocks")
+		for _, rawBlock := range chunk.RawBlocks {
+			s.Emitter.EmitLine(rawBlock.Content, false)
+		}
 	}
 }

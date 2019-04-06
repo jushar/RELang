@@ -146,7 +146,7 @@ func (s *CodeEmitter) EmitFunctionDeclaration(function *model.Function, inClass 
 	}
 
 	s.EmitLine(fmt.Sprintf("using Func_t = %s(%s *)(%s)", function.ReturnType, function.CallingConvention, FunctionParameterTypesToString(params)), true)
-	s.EmitLine(fmt.Sprintf("auto f = reinterpret_cast<Func_t>(0x%x)", *function.MemoryAddress), true)
+	s.EmitLine(fmt.Sprintf("auto f = reinterpret_cast<Func_t>(0x%X)", *function.MemoryAddress), true)
 	s.EmitLine(fmt.Sprintf("return f(%s)", FunctionParameterNamesToString(params, true)), true)
 
 	s.TabIndex = s.TabIndex - 1
@@ -159,8 +159,12 @@ func (s *CodeEmitter) EmitVirtualFunctionDeclaration(function *model.Function) {
 	s.EmitLine(fmt.Sprintf("virtual %s %s(%s) = 0", function.ReturnType, function.Name, FunctionParametersToString(function.Params)), true)
 }
 
-func (s *CodeEmitter) EmitVariableDeclaration(variable *model.Variable) {
+func (s *CodeEmitter) EmitClassVariableDeclaration(variable *model.Variable) {
 	s.EmitAccessBlock(variable.Public)
 
 	s.EmitLine(fmt.Sprintf("%s %s; // offset 0x%X", variable.Type, variable.Name, *variable.MemoryOffset), false)
+}
+
+func (s *CodeEmitter) EmitGlobalVariableDeclaration(variable *model.Variable) {
+	s.EmitLine(fmt.Sprintf("%s& %s = *(%s*)0x%X", variable.Type, variable.Name, variable.Type, *variable.MemoryOffset), true)
 }
