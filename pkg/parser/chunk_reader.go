@@ -1,10 +1,10 @@
 package parser
 
 import (
-	"errors"
 	"strconv"
 
 	"github.com/Jusonex/RELang/pkg/model"
+	log "github.com/sirupsen/logrus"
 )
 
 // Type for creating a chunk model from the parsed AST
@@ -65,8 +65,7 @@ func (s *ChunkReader) ExitFunctionDeclaration(ctx *FunctionDeclarationContext) {
 		s.State.Class.AddFunction(s.State.Function)
 	} else {
 		if s.State.Function.MemoryAddress == nil {
-			panic(errors.New("global functions are required to have an address"))
-			// TODO: Show error if
+			log.Fatal("global functions are required to have an address")
 		}
 		s.State.Chunk.AddFunction(s.State.Function)
 	}
@@ -117,7 +116,7 @@ func (s *ChunkReader) ExitVariableDeclaration(ctx *VariableDeclarationContext) {
 		s.State.Class.AddVariable(s.State.Variable)
 	} else {
 		if s.State.Variable.MemoryOffset == nil {
-			panic("no memory address given for global variable") // TODO: Log error
+			log.WithFields(log.Fields{"line": ctx.GetStart().GetLine()}).Fatal("no memory address given for global variable")
 		}
 
 		s.State.Chunk.AddVariable(s.State.Variable)
@@ -146,7 +145,7 @@ func (s *ChunkReader) EnterMemoryAddress(ctx *MemoryAddressContext) {
 	} else if s.ContextStack.Top() == CONTEXT_VARIABLE_DECL {
 		s.State.Variable.MemoryOffset = &memoryAddress
 	} else {
-		// TODO: Log error
+		log.Fatal("internal compiler error: unknown context in EnterMemoryAddress")
 	}
 }
 

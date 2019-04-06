@@ -7,6 +7,7 @@ import (
 	"github.com/Jusonex/RELang/pkg/parser"
 	"github.com/antlr/antlr4/runtime/Go/antlr"
 	flags "github.com/jessevdk/go-flags"
+	log "github.com/sirupsen/logrus"
 )
 
 type cliOptions struct {
@@ -16,17 +17,23 @@ type cliOptions struct {
 }
 
 func main() {
+	// Init logger
+	log.SetFormatter(&log.TextFormatter{
+		ForceColors:            true,
+		DisableLevelTruncation: true,
+	})
+
 	// Parse arguments
 	options := cliOptions{}
 	_, err := flags.ParseArgs(&options, os.Args)
 	if err != nil {
-		panic(err)
+		log.WithFields(log.Fields{"error": err}).Fatal("invalid arguments")
 	}
 
 	// Open file as stream
 	input, err := antlr.NewFileStream(options.InputPath)
 	if err != nil {
-		panic(err)
+		log.WithFields(log.Fields{"error": err}).Fatal("could not open input file")
 	}
 
 	// Create lexer and token stream
@@ -48,4 +55,6 @@ func main() {
 		defer generator.Close()
 		generator.Generate(chunkReader.State.Chunk)
 	}
+
+	log.Info("compiled successfully")
 }
