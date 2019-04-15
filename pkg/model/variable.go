@@ -25,6 +25,7 @@ func NewVariablePad(memoryOffset uint64, size uint64) *Variable {
 		Name:         fmt.Sprintf("_pad_%x[%d]", memoryOffset, size),
 		Type:         "char",
 		MemoryOffset: &addr,
+		Size:         size,
 		Public:       false,
 	}
 }

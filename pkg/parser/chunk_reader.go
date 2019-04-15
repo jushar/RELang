@@ -113,6 +113,11 @@ func (s *ChunkReader) ExitVariableDeclaration(ctx *VariableDeclarationContext) {
 
 	inClass := s.ContextStack.Contains(CONTEXT_CLASS_DECL)
 	if inClass {
+		// Check if first offset is defined
+		if len(s.State.Class.Variables) == 0 && s.State.Variable.MemoryOffset == nil {
+			log.WithFields(log.Fields{"line": ctx.GetStart().GetLine()}).Fatal("the first variable offset needs to be explicitly defined")
+		}
+
 		s.State.Class.AddVariable(s.State.Variable)
 	} else {
 		if s.State.Variable.MemoryOffset == nil {

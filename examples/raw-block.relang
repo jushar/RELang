@@ -1,9 +1,12 @@
 void g() @ 0xBEAF;
 
 ```
+#include <iostream>
+inline int f() {
     if (true) {
-        echo "Hello World";
+        std::cout << "Hello World" << std::endl;
     }{}
+}
 ```;
 
 

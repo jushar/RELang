@@ -3,6 +3,7 @@ package cpp
 import (
 	"github.com/Jusonex/RELang/pkg/generator"
 	"github.com/Jusonex/RELang/pkg/model"
+	log "github.com/sirupsen/logrus"
 )
 
 // CodeGenerator holds information about the C++ code generator
@@ -91,6 +92,7 @@ func (s *CodeGenerator) emitCode(chunk *model.Chunk) {
 
 	// Emit default includes
 	s.Emitter.EmitIncludeStatement("cstdint", false)
+	s.Emitter.EmitIncludeStatement("utility", false)
 	s.Emitter.EmitLine("", false)
 
 	// Emit forward declarations
@@ -137,7 +139,24 @@ func (s *CodeGenerator) emitCode(chunk *model.Chunk) {
 		}
 
 		s.Emitter.EmitClassDeclarationEnd()
-		s.Emitter.EmitClassSizeAssertion(class.Name, class.GetSize())
+
+		classSize := class.GetSize()
+		if classSize == 0 {
+			// C++ standard says that size of 0 is not allowed
+			classSize = 1
+		}
+
+		if class.HasVirtualMembers() {
+			// Check if a variable collides with the vtable ptr
+			for _, variable := range class.Variables {
+				offset := *variable.MemoryOffset
+				if offset < uint64(model.POINTER_SIZE) {
+					log.WithFields(log.Fields{"class": class.Name, "variable": variable.Name}).Error("member variables collides with vtable pointer")
+				}
+			}
+		}
+
+		s.Emitter.EmitClassSizeAssertion(class.Name, classSize)
 	}
 
 	// Emit global functions

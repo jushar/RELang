@@ -111,6 +111,9 @@ func (s *CodeEmitter) EmitForwardDeclaration(className string) {
 }
 
 func (s *CodeEmitter) EmitClassDeclarationStart(className string, baseClasses []string) {
+	s.EmitLine("#pragma pack(push)", false)
+	s.EmitLine("#pragma pack(1)", false)
+
 	if len(baseClasses) > 0 {
 		baseClassEnumeration := strings.Join(baseClasses, ", public ")
 		s.EmitLine(fmt.Sprintf("class %s : public %s\n{", className, baseClassEnumeration), false)
@@ -125,10 +128,11 @@ func (s *CodeEmitter) EmitClassDeclarationStart(className string, baseClasses []
 func (s *CodeEmitter) EmitClassDeclarationEnd() {
 	s.TabIndex = s.TabIndex - 1
 	s.EmitLine("}", true)
+	s.EmitLine("#pragma pack(pop)", false)
 }
 
 func (s *CodeEmitter) EmitClassSizeAssertion(className string, expectedSize uint64) {
-	s.EmitLine(fmt.Sprintf("static_assert(sizeof(%s) == %X, \"Unexpected class size\")", className, expectedSize), true)
+	s.EmitLine(fmt.Sprintf("static_assert(sizeof(%s) == 0x%X, \"Unexpected class size\")", className, expectedSize), true)
 }
 
 func (s *CodeEmitter) EmitFunctionDeclaration(function *model.Function, inClass bool) {

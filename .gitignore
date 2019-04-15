@@ -16,3 +16,9 @@
 /examples/out
 
 /test/testoutput.h
+/test/.vs
+/test/Debug
+/test/Release
+/test/x84
+/test/x64
+/test/*.user

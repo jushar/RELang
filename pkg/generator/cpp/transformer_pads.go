@@ -1,6 +1,9 @@
 package cpp
 
-import "github.com/Jusonex/RELang/pkg/model"
+import (
+	"github.com/Jusonex/RELang/pkg/model"
+	log "github.com/sirupsen/logrus"
+)
 
 // TransformerVariablePads inserts variable pads
 type TransformerVariablePads struct {
@@ -28,6 +31,27 @@ func (s *TransformerVariablePads) Transform(chunk *model.Chunk) {
 			// Add actual variable
 			newVariables = append(newVariables, variable)
 			currentAddr = currentAddr + uint64(size)
+		}
+
+		// Remove vtable ptr from variable list
+		if class.HasVirtualMembers() && len(newVariables) > 0 {
+			variable := newVariables[0]
+			if *variable.MemoryOffset != 0 {
+				log.WithFields(log.Fields{"class": class.Name, "variable": variable.Name, "offset": *variable.MemoryOffset}).Fatal(
+					"internal compiler error: class variables do not start at 0")
+			}
+
+			if variable.Size < uint64(model.POINTER_SIZE) {
+				log.WithFields(log.Fields{"class": class.Name, "variable": variable.Name, "size": variable.Size}).Fatal(
+					"internal compiler error: first member size is smaller than ptr size")
+			}
+
+			variable.Size = variable.Size - uint64(model.POINTER_SIZE)
+
+			// If size is zero, remove entirely
+			if variable.Size == 0 {
+				newVariables = newVariables[1 : len(newVariables)-1]
+			}
 		}
 
 		class.Variables = newVariables

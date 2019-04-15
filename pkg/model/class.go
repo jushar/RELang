@@ -46,6 +46,7 @@ func (s *Class) AddRawBlock(rawBlock *RawBlock) {
 }
 
 // Calculates the size of a class. This method has to be called after MemoryOffets are filled
+// If virtual-offsetting is applied through transformers, vtable ptr is implicitly included
 func (s *Class) GetSize() uint64 {
 	numVariables := len(s.Variables)
 	if numVariables == 0 {
@@ -54,4 +55,9 @@ func (s *Class) GetSize() uint64 {
 
 	lastVariable := s.Variables[numVariables-1]
 	return *lastVariable.MemoryOffset + lastVariable.Size
+}
+
+// HasVirtualMembers returns true if the class has virtual methods, false otherwise
+func (s *Class) HasVirtualMembers() bool {
+	return len(s.VirtualFunctions) > 0
 }
